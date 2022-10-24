@@ -311,7 +311,8 @@ namespace gpuLinAlg
 
     Vector CSRMatrix::gpuMatrixVectorMult(const Vector& v1) const
     {
-        // TODO: 
+        //TODO:
+        return Vector{10};
     }
     Vector CSRMatrix::seqMatrixVectorMult(const Vector& v1) const
     {

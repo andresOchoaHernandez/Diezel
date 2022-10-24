@@ -3,6 +3,8 @@
 
 #include "gpuLinAlg.hpp"
 
+//TODO: write unit tests for all classes and methods
+
 #define TEST_SIZE 800
 
 #define ROWS    94340
