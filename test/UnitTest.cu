@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <limits>
 
 #include "gpuLinAlg.hpp"
 
@@ -150,7 +151,6 @@ void test6()
 
 int main(void)
 {
-    test6();
 /*    
     test1();
     std::cout << "=======================================" << std::endl;
@@ -161,6 +161,8 @@ int main(void)
     test4();
     std::cout << "=======================================" << std::endl;
     test5();
+    std::cout << "=======================================" << std::endl;
+    test6();
 */
     return 0;
 }
