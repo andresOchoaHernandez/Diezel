@@ -51,7 +51,13 @@ bool checkIfVectorAreEqual(gpuLinAlg::Vector& v1,gpuLinAlg::Vector& v2)
 
     for(unsigned i = 0u ; i < v1.len() ; i++ )
     {
-        if(v1Vec[i] != v2Vec[i]) return false;
+        if(v1Vec[i] != v2Vec[i]) 
+        {
+            std::cout << "Error at index: " << i << std::endl
+                      << "v1 : " << v1[i] << " " << "v2 : " << v2[i] << std::endl;
+
+            return false;
+        }
     }
 
     return true;
@@ -111,8 +117,40 @@ void test4()
 
 }
 
+void test5()
+{
+    gpuLinAlg::CSRMatrix a{3,5,4};
+    a.randomInit(2,4);
+
+    gpuLinAlg::Vector x{5};
+    x.valInit(2);
+
+    gpuLinAlg::Vector c = a.seqMatrixVectorMult(x);
+
+    std::cout << a;
+    printVector(x);
+    printVector(c);
+}
+
+void test6()
+{
+    gpuLinAlg::CSRMatrix a{80000,50000,10000000};
+    a.randomInit(2,3);
+
+    gpuLinAlg::Vector x{50000};
+    x.valInit(1);
+
+    gpuLinAlg::Vector c = a.seqMatrixVectorMult(x);
+    gpuLinAlg::Vector d = a.gpuMatrixVectorMult(x);
+
+    assert(checkIfVectorAreEqual(c,d));
+    std::cout << "CSRMatrix vector multiplication test OK" << std::endl;
+
+}
+
 int main(void)
 {
+    test6();
 /*    
     test1();
     std::cout << "=======================================" << std::endl;
@@ -121,6 +159,8 @@ int main(void)
     test3();
     std::cout << "=======================================" << std::endl;
     test4();
+    std::cout << "=======================================" << std::endl;
+    test5();
 */
     return 0;
 }

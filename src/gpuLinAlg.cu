@@ -311,8 +311,53 @@ namespace gpuLinAlg
 
     Vector CSRMatrix::gpuMatrixVectorMult(const Vector& v1) const
     {
-        //TODO:
-        return Vector{10};
+        if(_nCols != v1.len()) throw std::runtime_error{"Matrix dimensions and vector dimensions don't match"};
+
+        Vector rv{_nRows};
+
+        int* rows_device;
+        int* cols_device;
+        int* vals_device; 
+        
+        int* v1_device; 
+        int* rv_device;
+
+        cudaMalloc(&rows_device,sizeof(int)*(_nRows + 1));
+        cudaMalloc(&cols_device,sizeof(int)*_nNzElems);
+        cudaMalloc(&vals_device,sizeof(int)*_nNzElems);
+
+        cudaMalloc(&v1_device,sizeof(int)*v1.len());
+        cudaMalloc(&rv_device,sizeof(int)*rv.len());
+
+        cudaMemcpy(rows_device,_rows,sizeof(int)*(_nRows + 1),cudaMemcpyHostToDevice);
+        cudaMemcpy(cols_device,_cols,sizeof(int)*_nNzElems,cudaMemcpyHostToDevice);
+        cudaMemcpy(vals_device,_vals,sizeof(int)*_nNzElems,cudaMemcpyHostToDevice);
+
+        cudaMemcpy(v1_device,&v1[0u],sizeof(int)*v1.len(),cudaMemcpyHostToDevice);
+
+        const unsigned threadsPerBlock = 1024u;
+        const unsigned numberOfBlocks = _nRows < threadsPerBlock? 1u: (_nRows % threadsPerBlock == 0u? _nRows/threadsPerBlock:_nRows/threadsPerBlock +1u);
+        dim3 dimGrid(numberOfBlocks,1,1);
+        dim3 dimBlock(threadsPerBlock,1,1);
+
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        csrMatrixVectorMultKernel<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
+        cudaDeviceSynchronize();
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << "Cuda kernel for csr matrix vector multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
+
+        cudaMemcpy(&rv[0u],rv_device,sizeof(int)*rv.len(),cudaMemcpyDeviceToHost);
+
+        cudaFree(rows_device);
+        cudaFree(cols_device);
+        cudaFree(vals_device);
+
+        cudaFree(v1_device);
+        cudaFree(rv_device);
+
+        cudaDeviceReset();
+
+        return rv;
     }
     Vector CSRMatrix::seqMatrixVectorMult(const Vector& v1) const
     {
@@ -323,16 +368,22 @@ namespace gpuLinAlg
         unsigned startRow = 0u; 
         unsigned endRow   = 0u;
 
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         for(unsigned i = 0u; i < _nRows ; i++ )
         {
             startRow = _rows[i];
             endRow   = _rows[i + 1u];
+
+            rv[i] = 0;
 
             for(unsigned j = startRow; j < endRow; j++)
             {
                 rv[i] += _vals[j] * v1[_cols[j]];
             } 
         }
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << "Sequential csr matrix vector multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
+
 
         return rv;
     }
@@ -345,10 +396,10 @@ namespace gpuLinAlg
         std::uniform_int_distribution<std::mt19937::result_type> vals_dist(a,b);
         std::uniform_int_distribution<std::mt19937::result_type> cols_dist(0,_nCols-1);
 
-        std::vector<bool> matrixIndexes(_nRows * _nCols);
+        std::vector<char> matrixIndexes(_nRows * _nCols);
         for(unsigned i = 0u; i < _nRows ; i ++)
         {
-            matrixIndexes[i*_nCols + cols_dist(rng)] = true;
+            matrixIndexes[i*_nCols + cols_dist(rng)] = '0';
         }
 
         unsigned elemsToDistribute = _nNzElems - _nRows;
@@ -363,14 +414,14 @@ namespace gpuLinAlg
 
                 randomIndex = cols_dist(rng) ;
 
-                if(matrixIndexes[i*_nCols + randomIndex] == true)
+                if(matrixIndexes[i*_nCols + randomIndex] == '1')
                 {
                     for(unsigned j = 0u ; j < _nCols; j++ )
                     {
-                        if(matrixIndexes[i*_nCols + j] == false)
+                        if(matrixIndexes[i*_nCols + j] == '0')
                         {
                             rowIsFull = false;
-                            matrixIndexes[i*_nCols + j] = true;
+                            matrixIndexes[i*_nCols + j] = '1';
                             elemsToDistribute--;
                             break;
                         }
@@ -382,7 +433,7 @@ namespace gpuLinAlg
                 }
                 else
                 {
-                    matrixIndexes[i*_nCols + randomIndex] = true;
+                    matrixIndexes[i*_nCols + randomIndex] = '1';
                     elemsToDistribute--;
                 }
             }
@@ -396,7 +447,7 @@ namespace gpuLinAlg
         {
             for(unsigned j = 0u ; j < _nCols ; j++)
             {
-                if(matrixIndexes[i*_nCols + j])
+                if(matrixIndexes[i*_nCols + j] == '1')
                 {
                     _cols[NzElemsIndex] = j; 
                     _vals[NzElemsIndex] = vals_dist(rng);
