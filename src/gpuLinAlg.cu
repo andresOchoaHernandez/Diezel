@@ -389,6 +389,8 @@ namespace gpuLinAlg
     }
     void CSRMatrix::randomInit(int a,int b)
     {
+        //TODO: fix this method
+
         if(a == 0 || b == 0) throw std::runtime_error("a and b must be != 0");
 
         std::random_device dev;
@@ -456,6 +458,9 @@ namespace gpuLinAlg
             }
             _rows[i + 1u] = NzElemsIndex;
         }
+
+        std::cout << "debug : "<< std::endl;
+        std::cout << _vals[0] << std::endl;
     }
 
     std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand)

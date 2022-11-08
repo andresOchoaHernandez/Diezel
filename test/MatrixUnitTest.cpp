@@ -7,6 +7,12 @@
 
 int main()
 {
-    std::cout << "Matrix unit test" << std::endl;
+    using gpuLinAlg::Matrix;
+
+    Matrix a{10,10};
+    a.randomInit(1,10);
+
+    printMatrix(a);
+
     return 0;
 }

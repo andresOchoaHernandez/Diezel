@@ -7,7 +7,12 @@
 
 int main()
 {
-    std::cout << "CSRMatrix unit test" << std::endl;
+    using gpuLinAlg::CSRMatrix;
+
+    CSRMatrix a {5,10,10};
+    a.randomInit(4,9);
+
+    std::cout << a;
 
     return 0;
 }
