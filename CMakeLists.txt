@@ -97,7 +97,7 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
     add_test(
         NAME CSRMatrixUnitTest
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/
-        COMMAND ./matrixUnitTest
+        COMMAND ./CSRMatrixUnitTest
     )
 
     

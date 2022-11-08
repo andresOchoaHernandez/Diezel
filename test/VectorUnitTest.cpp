@@ -8,6 +8,5 @@
 int main()
 {
     std::cout << "Vector unit test" << std::endl;
-
     return 0;
 }

@@ -8,6 +8,5 @@
 int main()
 {
     std::cout << "Matrix unit test" << std::endl;
-
     return 0;
 }
