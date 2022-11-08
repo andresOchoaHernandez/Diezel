@@ -31,16 +31,18 @@ endif(CUDA_FOUND)
 # ======================== TEST ========================
 enable_testing()
 if(CUDA_FOUND AND CUDA_HAVE_GPU)
-    add_executable(unitTest ${PROJECT_SOURCE_DIR}/test/UnitTest.cu)
+
+    #======================== VECTOR =====================
+    add_executable(vectorUnitTest ${PROJECT_SOURCE_DIR}/test/VectorUnitTest.cpp)
 
     target_include_directories(
-        unitTest
+        vectorUnitTest
         PUBLIC  ${PROJECT_SOURCE_DIR}/include/
         PRIVATE ${PROJECT_SOURCE_DIR}/src/
     )
 
     target_sources(
-        unitTest
+        vectorUnitTest
         PUBLIC  ${PROJECT_SOURCE_DIR}/include/gpuLinAlg.hpp
         PRIVATE ${PROJECT_SOURCE_DIR}/src/gpuLinAlg.cu
     )
@@ -48,8 +50,55 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
     enable_testing()
 
     add_test(
-        NAME unitTest
+        NAME vectorUnitTest
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/
-        COMMAND ./unitTest
+        COMMAND ./vectorUnitTest
     )
+
+    #======================== MATRIX ======================
+    add_executable(matrixUnitTest ${PROJECT_SOURCE_DIR}/test/MatrixUnitTest.cpp)
+
+    target_include_directories(
+        matrixUnitTest
+        PUBLIC  ${PROJECT_SOURCE_DIR}/include/
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/
+    )
+
+    target_sources(
+        matrixUnitTest
+        PUBLIC  ${PROJECT_SOURCE_DIR}/include/gpuLinAlg.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/gpuLinAlg.cu
+    )
+
+    enable_testing()
+
+    add_test(
+        NAME matrixUnitTest
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/
+        COMMAND ./matrixUnitTest
+    )
+    #======================== CSRMATRIX ===================
+    add_executable(CSRMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSRMatrixUnitTest.cpp)
+
+    target_include_directories(
+        CSRMatrixUnitTest
+        PUBLIC  ${PROJECT_SOURCE_DIR}/include/
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/
+    )
+
+    target_sources(
+        CSRMatrixUnitTest
+        PUBLIC  ${PROJECT_SOURCE_DIR}/include/gpuLinAlg.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/gpuLinAlg.cu
+    )
+
+    enable_testing()
+
+    add_test(
+        NAME CSRMatrixUnitTest
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/
+        COMMAND ./matrixUnitTest
+    )
+
+    
 endif()
