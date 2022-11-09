@@ -2,6 +2,8 @@ project(Diezel)
 
 cmake_minimum_required(VERSION 3.8.2)
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror")
+
 # ======================== CUDA ========================
 find_package(CUDA)
 
@@ -33,7 +35,9 @@ enable_testing()
 if(CUDA_FOUND AND CUDA_HAVE_GPU)
 
     #======================== VECTOR =====================
+
     add_executable(vectorUnitTest ${PROJECT_SOURCE_DIR}/test/VectorUnitTest.cpp)
+    
 
     target_include_directories(
         vectorUnitTest
@@ -48,6 +52,11 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
         PRIVATE ${PROJECT_SOURCE_DIR}/src/Matrix.cu
         PRIVATE ${PROJECT_SOURCE_DIR}/src/CSRMatrix.cu
     )
+
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(vectorUnitTest PUBLIC OpenMP::OpenMP_CXX)
+    endif()
 
     enable_testing()
 

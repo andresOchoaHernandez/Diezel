@@ -19,6 +19,10 @@ namespace LinearAlgebra{
 
             Vector gpuVectorDif(const Vector& v2)const;
             Vector seqVectorDif(const Vector& v2)const;
+            
+            Vector seqVectorSum(const Vector& v2)const;
+            Vector threadedVectorSum(const Vector& v2)const;
+            
             void randomInit(int a,int b);
             void valInit(int val);
 

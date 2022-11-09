@@ -72,6 +72,37 @@ namespace LinearAlgebra
         return rv;
     }
 
+    Vector Vector::seqVectorSum(const Vector& v2)const
+    {
+        if( _len != v2.len()) throw std::runtime_error{"Vectors dimensions don't match"};
+        Vector result{_len};
+
+        for(unsigned i = 0u ; i < _len ; i++)
+            result[i] = _vec[i] + v2[i];
+
+        return result;
+    }
+
+    Vector Vector::threadedVectorSum(const Vector& v2)const
+    {
+        if( _len != v2.len()) throw std::runtime_error{"Vectors dimensions don't match"};
+
+        Vector result{_len};
+
+        #pragma omp parallel num_threads(12)
+        {
+            std::cout << "hello" << std::endl;
+        }
+
+        #pragma omp for
+        {
+            for(unsigned i = 0u ; i < _len ; i++)
+                result[i] = _vec[i] + v2[i];
+        }
+
+        return result;
+    }
+
     void Vector::randomInit(int a, int b)
     {
         std::random_device dev;
