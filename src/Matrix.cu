@@ -1,7 +1,6 @@
 #include <random>
 #include <chrono>
 #include <iostream>
-#include <vector>
 
 #include "LinearAlgebra.hpp"
 #include "MatrixKernels.cu"
@@ -166,6 +165,21 @@ namespace LinearAlgebra
 
     int& Matrix::operator [](unsigned i){return _data[i];}
     const int& Matrix::operator [](unsigned i)const{return _data[i];}
+
+    bool Matrix::operator==(const Matrix& other) const
+    {
+        if(_rows != other.rows() || _cols != other.cols()) return false;
+
+        for(unsigned i = 0u ; i < _rows ; i++)
+        {
+            for(unsigned j = 0u; j < _cols ; j++)
+            {
+                if(_data[i*_cols + j] != other[i*_cols + j]) return false;
+            }
+        }
+
+        return true;
+    }
 
     std::ostream& operator<<(std::ostream& stream, const Matrix& operand)
     {

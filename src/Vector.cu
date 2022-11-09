@@ -1,7 +1,6 @@
 #include <random>
 #include <chrono>
 #include <iostream>
-#include <vector>
 
 #include "LinearAlgebra.hpp"
 #include "VectorKernels.cu"
@@ -94,6 +93,18 @@ namespace LinearAlgebra
 
     int& Vector::operator [](unsigned i){return _vec[i];}
     const int& Vector::operator [](unsigned i)const{return _vec[i];}
+
+    bool Vector::operator==(const Vector& other) const
+    {
+        if(_len != other.len()) return false;
+
+        for(unsigned i = 0u ; i < _len ; i++)
+        {
+            if(_vec[i] != other[i]) return false;
+        }
+
+        return true;
+    }
 
     std::ostream& operator<<(std::ostream& stream, const Vector& operand)
     {

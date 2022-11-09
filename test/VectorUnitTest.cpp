@@ -1,18 +1,32 @@
-#include <iostream>
 #include <cassert>
-#include <limits>
 
 #include "LinearAlgebra.hpp"
-#include "testUtils.cpp"
 
-int main()
+void test_equalityOperator()
 {
     using LinearAlgebra::Vector;
 
     Vector a{100};
-    a.randomInit(2,4);
+    a.valInit(1);
 
-    std::cout << a;
+    Vector b{100};
+    b.valInit(1);
+
+    assert(a == b);
+
+    b.valInit(2);
+
+    assert(!(a == b));
+
+    Vector c{10};
+    c.valInit(1);
+
+    assert(!(a == c));
+}
+
+int main()
+{
+    test_equalityOperator();
 
     return 0;
 }

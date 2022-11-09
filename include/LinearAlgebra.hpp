@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 namespace LinearAlgebra{
 
     class Vector; class Matrix; class CSRMatrix;
@@ -25,6 +27,7 @@ namespace LinearAlgebra{
 
             int& operator [](unsigned i);
             const int& operator [](unsigned i)const;
+            bool operator==(const Vector& other) const;
 
             friend std::ostream& operator<<(std::ostream& stream, const Vector& operand);
     };
@@ -55,6 +58,7 @@ namespace LinearAlgebra{
 
             int& operator [](unsigned i);
             const int& operator [](unsigned i)const;
+            bool operator==(const Matrix& other) const;
 
             friend std::ostream& operator<<(std::ostream& stream, const Matrix& operand);
     };
