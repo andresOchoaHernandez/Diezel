@@ -2,12 +2,12 @@
 #include <cassert>
 #include <limits>
 
-#include "gpuLinAlg.hpp"
+#include "LinearAlgebra.hpp"
 #include "testUtils.cpp"
 
 int main()
 {
-    using gpuLinAlg::CSRMatrix;
+    using LinearAlgebra::CSRMatrix;
 
     CSRMatrix a {5,10,10};
     a.randomInit(4,9);

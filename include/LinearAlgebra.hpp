@@ -1,6 +1,6 @@
 #pragma once
 
-namespace gpuLinAlg{
+namespace LinearAlgebra{
 
     class Vector; class Matrix; class CSRMatrix;
 

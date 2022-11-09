@@ -2,12 +2,12 @@
 #include <cassert>
 #include <limits>
 
-#include "gpuLinAlg.hpp"
+#include "LinearAlgebra.hpp"
 #include "testUtils.cpp"
 
 int main()
 {
-    using gpuLinAlg::Vector;
+    using LinearAlgebra::Vector;
 
     Vector a{100};
     a.randomInit(2,4);

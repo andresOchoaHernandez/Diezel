@@ -43,8 +43,10 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
 
     target_sources(
         vectorUnitTest
-        PUBLIC  ${PROJECT_SOURCE_DIR}/include/gpuLinAlg.hpp
-        PRIVATE ${PROJECT_SOURCE_DIR}/src/gpuLinAlg.cu
+        PUBLIC  ${PROJECT_SOURCE_DIR}/include/LinearAlgebra.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/Vector.cu
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/Matrix.cu
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/CSRMatrix.cu
     )
 
     enable_testing()
@@ -66,8 +68,10 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
 
     target_sources(
         matrixUnitTest
-        PUBLIC  ${PROJECT_SOURCE_DIR}/include/gpuLinAlg.hpp
-        PRIVATE ${PROJECT_SOURCE_DIR}/src/gpuLinAlg.cu
+        PUBLIC  ${PROJECT_SOURCE_DIR}/include/LinearAlgebra.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/Vector.cu
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/Matrix.cu
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/CSRMatrix.cu
     )
 
     enable_testing()
@@ -78,26 +82,28 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
         COMMAND ./matrixUnitTest
     )
     #======================== CSRMATRIX ===================
-    add_executable(cSRMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSRMatrixUnitTest.cpp)
+    add_executable(csrMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSRMatrixUnitTest.cpp)
 
     target_include_directories(
-        cSRMatrixUnitTest
+        csrMatrixUnitTest
         PUBLIC  ${PROJECT_SOURCE_DIR}/include/
         PRIVATE ${PROJECT_SOURCE_DIR}/src/
     )
 
     target_sources(
-        cSRMatrixUnitTest
-        PUBLIC  ${PROJECT_SOURCE_DIR}/include/gpuLinAlg.hpp
-        PRIVATE ${PROJECT_SOURCE_DIR}/src/gpuLinAlg.cu
+        csrMatrixUnitTest
+        PUBLIC  ${PROJECT_SOURCE_DIR}/include/LinearAlgebra.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/Vector.cu
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/Matrix.cu
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/CSRMatrix.cu
     )
 
     enable_testing()
 
     add_test(
-        NAME cSRMatrixUnitTest
+        NAME csrMatrixUnitTest
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/
-        COMMAND ./cSRMatrixUnitTest
+        COMMAND ./csrMatrixUnitTest
     )
 
     

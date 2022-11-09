@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "gpuLinAlg.hpp"
+#include "LinearAlgebra.hpp"
 
-bool checkIfVectorAreEqual(gpuLinAlg::Vector& v1,gpuLinAlg::Vector& v2)
+bool checkIfVectorAreEqual(LinearAlgebra::Vector& v1,LinearAlgebra::Vector& v2)
 {
     int* v1Vec = v1.getVec();
     int* v2Vec = v2.getVec();
