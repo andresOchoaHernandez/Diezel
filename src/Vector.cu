@@ -8,7 +8,14 @@
 namespace LinearAlgebra
 {
     Vector::Vector(unsigned len):_len{len},_vec{new int[_len]}{}
-    Vector::Vector(const Vector& vector):_len{vector._len},_vec{new int[_len]}{for(unsigned i = 0u ; i < _len ; i++)_vec[i] = vector._vec[i];}
+    Vector::Vector(const Vector& vector):_len{vector._len},_vec{new int[_len]}
+    {
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++)
+        {
+            _vec[i] = vector._vec[i];
+        }
+    }
     Vector::Vector(Vector&& v)
     {
         _len = v._len;
@@ -18,7 +25,121 @@ namespace LinearAlgebra
     }
     Vector::~Vector(){delete[] _vec;}
 
-    Vector Vector::gpuVectorDif(const Vector& v2)const
+
+    Vector Vector::operator+(const Vector& other)const
+    {
+        if( _len != other.len()) throw std::runtime_error{"Vectors dimensions don't match"};
+
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i] + other[i];
+        }
+
+        return result;
+    }
+
+    Vector Vector::operator-(const Vector& other)const
+    {
+        if( _len != other.len()) throw std::runtime_error{"Vectors dimensions don't match"};
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i]- other[i];
+        }
+
+        return result;
+    }
+
+    Vector Vector::operator*(const Vector& other)const
+    {
+        if( _len != other.len()) throw std::runtime_error{"Vectors dimensions don't match"};
+        
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i]*other[i];
+        }
+
+        return result;
+    }
+
+    Vector Vector::operator/(const Vector& other)const
+    {
+        if( _len != other.len()) throw std::runtime_error{"Vectors dimensions don't match"};
+        
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i] / other[i];
+        }
+
+
+        return result;
+    }
+
+    Vector Vector::operator+(const int constant)const
+    {   
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i] + constant;
+        }
+    
+        return result;
+    }
+
+    Vector Vector::operator-(const int constant)const
+    {
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i] - constant;
+        }
+
+        return result;
+    }
+
+    Vector Vector::operator*(const int constant)const
+    {
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i] * constant;
+        }
+
+        return result;
+    }
+
+    Vector Vector::operator/(const int constant)const
+    {
+        Vector result{_len};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u ; i < _len ; i++ )
+        {
+            result[i] = _vec[i] / constant;
+        }
+
+        return result;
+    }
+
+
+    Vector Vector::gpu_diff(const Vector& v2)const
     {
         if( _len != v2.len()) throw std::runtime_error{"Vectors dimensions don't match"};
 
@@ -55,66 +176,20 @@ namespace LinearAlgebra
         return rv;
     }
 
-    Vector Vector::seqVectorDif(const Vector& v2) const
-    {
-        if( _len != v2.len()) throw std::runtime_error{"Vectors dimensions don't match"};
-        
-        Vector rv{_len};
-
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        for(unsigned i = 0u ; i < rv.len(); i++)
-        {
-            rv[i] = _vec[i] - v2[i];
-        }
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Sequential vector diff took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
-        
-        return rv;
-    }
-
-    Vector Vector::seqVectorSum(const Vector& v2)const
-    {
-        if( _len != v2.len()) throw std::runtime_error{"Vectors dimensions don't match"};
-        Vector result{_len};
-
-        for(unsigned i = 0u ; i < _len ; i++)
-            result[i] = _vec[i] + v2[i];
-
-        return result;
-    }
-
-    Vector Vector::threadedVectorSum(const Vector& v2)const
-    {
-        if( _len != v2.len()) throw std::runtime_error{"Vectors dimensions don't match"};
-
-        Vector result{_len};
-
-        #pragma omp parallel num_threads(12)
-        {
-            std::cout << "hello" << std::endl;
-        }
-
-        #pragma omp for
-        {
-            for(unsigned i = 0u ; i < _len ; i++)
-                result[i] = _vec[i] + v2[i];
-        }
-
-        return result;
-    }
-
     void Vector::randomInit(int a, int b)
     {
         std::random_device dev;
         std::mt19937 rng(dev());
         std::uniform_int_distribution<std::mt19937::result_type> dist(a,b);
 
+        #pragma omp parallel for
         for (unsigned i = 0u ; i < _len ; i++ )
             _vec[i] = dist(rng);
     }
 
     void Vector::valInit(int val)
     {
+        #pragma omp parallel for
         for (unsigned i = 0u ; i < _len ; i++ )
             _vec[i] = val;
     }

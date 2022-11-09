@@ -26,32 +26,29 @@ void test_equalityOperator()
     assert(!(a == c));
 }
 
-void test_multi()
+void test_arithmetic()
 {
     using LinearAlgebra::Vector;
 
-    Vector a{100000000};
+    Vector a{100000};
     a.valInit(1);
-    Vector b{100000000};
+    Vector b{100000};
     b.valInit(1);
+    Vector c{100000};
+    c.valInit(2);
 
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    Vector c1 = a.seqVectorSum(b); 
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    std::cout << "Sequential vector sum: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
+    Vector d = a + b;
+    assert(c == d);
 
+    Vector r1 = a + 1;
+    assert(c == r1);
 
-    begin = std::chrono::steady_clock::now();
-    Vector c2 = a.threadedVectorSum(b);
-    end = std::chrono::steady_clock::now();
-    std::cout << "threaded vector sum: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
-    assert(c1 == c2);
 }
 
 int main()
 {
     test_equalityOperator();
-    test_multi();
+    test_arithmetic();
 
     return 0;
 }
