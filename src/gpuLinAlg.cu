@@ -95,6 +95,17 @@ namespace gpuLinAlg
     int& Vector::operator [](unsigned i){return _vec[i];}
     const int& Vector::operator [](unsigned i)const{return _vec[i];}
 
+    std::ostream& operator<<(std::ostream& stream, const Vector& operand)
+    {
+        for(unsigned i = 0u ; i < operand._len ; i++)
+            stream << operand[i] << " ";
+    
+        stream << std::endl;
+
+        return stream;
+    }
+
+
 /*========================================================================================================================================*/
 
     Matrix::Matrix(unsigned rows, unsigned cols):_rows{rows},_cols{cols},_data{new int[_rows*_cols]}{}
@@ -256,6 +267,21 @@ namespace gpuLinAlg
     int& Matrix::operator [](unsigned i){return _data[i];}
     const int& Matrix::operator [](unsigned i)const{return _data[i];}
 
+    std::ostream& operator<<(std::ostream& stream, const Matrix& operand)
+    {
+        for(unsigned i = 0u; i < operand._rows ; i++)
+        {
+            for(unsigned j = 0u; j < operand._cols ; j++)
+            {
+                stream << operand[i*operand._cols + j] << " ";
+            }
+
+            stream << std::endl;
+        }
+
+        return stream;
+    }
+
 /*========================================================================================================================================*/
 
     CSRMatrix::CSRMatrix(unsigned nRows,unsigned nCols, unsigned nNzElems):
@@ -398,10 +424,11 @@ namespace gpuLinAlg
         std::uniform_int_distribution<std::mt19937::result_type> vals_dist(a,b);
         std::uniform_int_distribution<std::mt19937::result_type> cols_dist(0,_nCols-1);
 
-        std::vector<char> matrixIndexes(_nRows * _nCols);
+        std::vector<char> matrixIndexes(_nRows * _nCols,'0');
+
         for(unsigned i = 0u; i < _nRows ; i ++)
         {
-            matrixIndexes[i*_nCols + cols_dist(rng)] = '0';
+            matrixIndexes[i*_nCols + cols_dist(rng)] = '1';
         }
 
         unsigned elemsToDistribute = _nNzElems - _nRows;
@@ -458,37 +485,6 @@ namespace gpuLinAlg
             }
             _rows[i + 1u] = NzElemsIndex;
         }
-
-        std::cout << "debug : "<< std::endl;
-        std::cout << _vals[0] << std::endl;
-    }
-
-    std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand)
-    {
-        stream << "rows | ";
-
-        for(unsigned i = 0u; i <= operand._nRows; i++)
-        {
-            stream << operand._rows[i] << " ";
-        }
-
-        stream << std::endl << "cols | ";
-
-        for(unsigned i = 0u; i < operand._nNzElems; i++)
-        {
-            stream << operand._cols[i] << " ";        
-        }
-
-        stream << std::endl << "vals | ";
-
-        for(unsigned i = 0u; i < operand._nNzElems; i++)
-        {
-            stream << operand._vals[i] << " ";        
-        }
-
-        stream << std::endl << std::endl;
-
-        return stream;
     }
 
     Matrix CSRMatrix::toMatrix()
@@ -517,4 +513,32 @@ namespace gpuLinAlg
     unsigned* CSRMatrix::getRowsArray(){return _rows;}
     unsigned* CSRMatrix::getColsArray(){return _cols;}
     int*      CSRMatrix::getValsArray(){return _vals;}
+
+    std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand)
+    {
+        stream << "rows | ";
+
+        for(unsigned i = 0u; i <= operand._nRows; i++)
+        {
+            stream << operand._rows[i] << " ";
+        }
+
+        stream << std::endl << "cols | ";
+
+        for(unsigned i = 0u; i < operand._nNzElems; i++)
+        {
+            stream << operand._cols[i] << " ";        
+        }
+
+        stream << std::endl << "vals | ";
+
+        for(unsigned i = 0u; i < operand._nNzElems; i++)
+        {
+            stream << operand._vals[i] << " ";        
+        }
+
+        stream << std::endl;
+
+        return stream;
+    }
 }

@@ -78,16 +78,16 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
         COMMAND ./matrixUnitTest
     )
     #======================== CSRMATRIX ===================
-    add_executable(CSRMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSRMatrixUnitTest.cpp)
+    add_executable(cSRMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSRMatrixUnitTest.cpp)
 
     target_include_directories(
-        CSRMatrixUnitTest
+        cSRMatrixUnitTest
         PUBLIC  ${PROJECT_SOURCE_DIR}/include/
         PRIVATE ${PROJECT_SOURCE_DIR}/src/
     )
 
     target_sources(
-        CSRMatrixUnitTest
+        cSRMatrixUnitTest
         PUBLIC  ${PROJECT_SOURCE_DIR}/include/gpuLinAlg.hpp
         PRIVATE ${PROJECT_SOURCE_DIR}/src/gpuLinAlg.cu
     )
@@ -95,9 +95,9 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU)
     enable_testing()
 
     add_test(
-        NAME CSRMatrixUnitTest
+        NAME cSRMatrixUnitTest
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/
-        COMMAND ./CSRMatrixUnitTest
+        COMMAND ./cSRMatrixUnitTest
     )
 
     

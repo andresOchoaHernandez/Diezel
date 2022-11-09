@@ -25,6 +25,8 @@ namespace gpuLinAlg{
 
             int& operator [](unsigned i);
             const int& operator [](unsigned i)const;
+
+            friend std::ostream& operator<<(std::ostream& stream, const Vector& operand);
     };
 
     class Matrix
@@ -53,6 +55,8 @@ namespace gpuLinAlg{
 
             int& operator [](unsigned i);
             const int& operator [](unsigned i)const;
+
+            friend std::ostream& operator<<(std::ostream& stream, const Matrix& operand);
     };
 
     class CSRMatrix
@@ -86,6 +90,4 @@ namespace gpuLinAlg{
 
             friend std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand);
     };
-
-    std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand);
 }

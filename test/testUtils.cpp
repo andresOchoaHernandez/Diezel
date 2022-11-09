@@ -20,30 +20,3 @@ bool checkIfVectorAreEqual(gpuLinAlg::Vector& v1,gpuLinAlg::Vector& v2)
 
     return true;
 }
-
-void printMatrix(gpuLinAlg::Matrix& m)
-{
-    std::cout << "---------------------" << std::endl;
-
-    for(unsigned i = 0u; i < m.rows() ; i++)
-    {
-        for(unsigned j = 0u ; j < m.cols(); j++)
-        {
-            std::cout << m[i*m.cols() + j] << " ";
-        }
-
-        std::cout << std::endl;
-    }
-
-    std::cout << std::endl << "---------------------" << std::endl;
-}
-
-void printVector(gpuLinAlg::Vector& v)
-{
-    std::cout << "---------------------" << std::endl;
-
-    for(unsigned i = 0u; i < v.len() ; i++)
-        std::cout << v[i] <<" ";
-
-    std::cout << std::endl << "---------------------" << std::endl;
-}

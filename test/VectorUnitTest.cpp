@@ -12,7 +12,7 @@ int main()
     Vector a{100};
     a.randomInit(2,4);
 
-    printVector(a);
+    std::cout << a;
 
     return 0;
 }

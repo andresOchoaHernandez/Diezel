@@ -12,7 +12,7 @@ int main()
     Matrix a{10,10};
     a.randomInit(1,10);
 
-    printMatrix(a);
-
+    std::cout << a;
+    
     return 0;
 }
