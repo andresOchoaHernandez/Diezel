@@ -18,6 +18,9 @@ namespace LinearAlgebra{
             Vector(Vector&& v);
             ~Vector();
 
+            void randomInit(int a,int b);
+            void valInit(int val);
+
             Vector operator+(const Vector& other)const;
             Vector operator-(const Vector& other)const;
             Vector operator*(const Vector& other)const;
@@ -30,9 +33,6 @@ namespace LinearAlgebra{
 
             Vector gpu_diff(const Vector& v2)const;
             Vector gpu_sum(const Vector& v2)const;
-
-            void randomInit(int a,int b);
-            void valInit(int val);
 
             unsigned len()const;
             int*     getVec();
@@ -57,6 +57,9 @@ namespace LinearAlgebra{
             Matrix(Matrix&& mat);
             ~Matrix();
 
+            void randomInit(int a,int b);
+            void valInit(int val);
+
             Matrix operator+(const Matrix& other)const;
             Matrix operator-(const Matrix& other)const;
             Matrix operator*(const Matrix& other)const;
@@ -67,10 +70,11 @@ namespace LinearAlgebra{
             Matrix operator*(const int constant)const;
             Matrix operator/(const int constant)const;
 
-            Vector gpuMatrixVectorMult(const Vector& v1)const;
-            Vector seqMatrixVectorMult(const Vector& v1)const;
-            void randomInit(int a,int b);
-            void valInit(int val);
+            Vector matrixVectorMult(const Vector& v1)const;
+            Matrix matrixMultiplication(const Matrix& mat)const;
+
+            Vector gpu_matrixVectorMult(const Vector& v1)const;
+            Matrix gpu_matrixMultiplication(const Matrix& mat)const;
 
             CSRMatrix toCSRMatrix() const;
 

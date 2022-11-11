@@ -161,7 +161,7 @@ namespace LinearAlgebra
         return result;
     }
 
-    Vector Matrix::gpuMatrixVectorMult(const Vector& v1) const
+    Vector Matrix::gpu_matrixVectorMult(const Vector& v1) const
     {
         if(_cols != v1.len()) throw std::runtime_error{"Matrix dimensions and vector dimensions don't match"};
 
@@ -197,7 +197,7 @@ namespace LinearAlgebra
 
         return rv;
     }
-    Vector Matrix::seqMatrixVectorMult(const Vector& v1) const
+    Vector Matrix::matrixVectorMult(const Vector& v1) const
     {
         if(_cols != v1.len()) throw std::runtime_error{"Matrix dimensions and vector dimensions don't match"};
 
@@ -218,6 +218,43 @@ namespace LinearAlgebra
 
         return rv;
     }
+
+    Matrix Matrix::matrixMultiplication(const Matrix& mat)const
+    {
+        if(_cols != mat.rows()) throw std::runtime_error{"Matrix dimensions don't match"};
+
+        Matrix result{_rows,mat.cols()};
+
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < mat.cols(); j++)
+            {
+                int acc = 0;
+                for(unsigned k = 0u ; k < _cols ; k++)
+                {
+                    acc += _data[ i*_cols + k] * mat[ mat.cols()*k + j];
+                }
+                result[i*mat.cols() + j] = acc;
+            }
+        }
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << "Sequential matrix multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
+
+
+        return result;
+    }
+
+    Matrix Matrix::gpu_matrixMultiplication(const Matrix& mat)const
+    {
+        if(_cols != mat.rows()) throw std::runtime_error{"Matrix dimensions don't match"};
+        //TODO:
+
+        return mat;
+    }
+
+
     void Matrix::randomInit(int a,int b)
     {
         std::random_device dev;

@@ -52,10 +52,33 @@ void test_arithmetic()
     assert(f == g);
 }
 
+void test_matrixMultiplication()
+{
+    using LinearAlgebra::Matrix;
+
+    const unsigned rows1 = 6000; 
+    const unsigned cols1 = 3000;
+    const unsigned cols2 = 400; 
+
+    Matrix a{rows1,cols1};
+    a.valInit(2);
+
+    Matrix b{cols1,cols2};
+    b.valInit(2);
+
+    Matrix c = a.matrixMultiplication(b);
+
+    Matrix d{rows1,cols2};
+    d.valInit(2*2*cols1);
+
+    assert(c == d);
+}
+
 int main()
 {
     test_equalityOperator();
     test_arithmetic();
+    test_matrixMultiplication();
     
     return 0;
 }
