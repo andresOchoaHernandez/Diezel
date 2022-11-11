@@ -176,6 +176,12 @@ namespace LinearAlgebra
         return rv;
     }
 
+    Vector Vector::gpu_sum(const Vector& v2)const
+    {
+        //TODO:
+        return v2;
+    }
+
     void Vector::randomInit(int a, int b)
     {
         std::random_device dev;

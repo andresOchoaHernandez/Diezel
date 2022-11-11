@@ -10,6 +10,7 @@ namespace LinearAlgebra
     Matrix::Matrix(unsigned rows, unsigned cols):_rows{rows},_cols{cols},_data{new int[_rows*_cols]}{}
     Matrix::Matrix(const Matrix& matrix):_rows{matrix._rows},_cols{matrix._cols},_data{new int[_rows*_cols]}
     {
+        #pragma omp parallel for
         for(unsigned i = 0u; i < _rows; i++)
         {
             for(unsigned j = 0u; j < _cols; j++)
@@ -29,6 +30,136 @@ namespace LinearAlgebra
         mat._data = nullptr;
     }
     Matrix::~Matrix(){delete[]_data;}
+
+    Matrix Matrix::operator+(const Matrix& other)const
+    {
+        if(_rows != other.rows() || _cols != other.cols()) throw std::runtime_error("Matrix dimensions must be equal!");
+
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] + other[i*_cols + j];
+            }
+        }
+
+        return result;
+    }
+    Matrix Matrix::operator-(const Matrix& other)const
+    {
+        if(_rows != other.rows() || _cols != other.cols()) throw std::runtime_error("Matrix dimensions must be equal!");
+        
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] - other[i*_cols + j];
+            }
+        }
+
+        return result;
+    }
+    Matrix Matrix::operator*(const Matrix& other)const
+    {
+        if(_rows != other.rows() || _cols != other.cols()) throw std::runtime_error("Matrix dimensions must be equal!");
+        
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] * other[i*_cols + j];
+            }
+        }
+
+        return result;
+    }
+    Matrix Matrix::operator/(const Matrix& other)const
+    {
+        if(_rows != other.rows() || _cols != other.cols()) throw std::runtime_error("Matrix dimensions must be equal!");
+        
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] / other[i*_cols + j];
+            }
+        }
+
+        return result;
+    }
+
+    Matrix Matrix::operator+(const int constant)const
+    {
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] + constant;
+            }
+        }
+
+        return result;
+    }
+    Matrix Matrix::operator-(const int constant)const
+    {
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] - constant;
+            }
+        }
+
+        return result;
+    }
+    Matrix Matrix::operator*(const int constant)const
+    {
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] * constant;
+            }
+        }
+
+        return result;
+    }
+    Matrix Matrix::operator/(const int constant)const
+    {
+        Matrix result{_rows,_cols};
+
+        #pragma omp parallel for
+        for(unsigned i = 0u; i < _rows ; i++)
+        {
+            for(unsigned j = 0u ; j < _cols ; j++)
+            {
+                result[i*_cols + j] = _data[i*_cols + j] / constant;
+            }
+        }
+
+        return result;
+    }
 
     Vector Matrix::gpuMatrixVectorMult(const Vector& v1) const
     {
@@ -93,6 +224,7 @@ namespace LinearAlgebra
         std::mt19937 rng(dev());
         std::uniform_int_distribution<std::mt19937::result_type> dist(a,b);
 
+        #pragma omp parallel for
         for(unsigned i = 0u; i < _rows; i++)
         {
             for(unsigned j = 0u; j < _cols; j++)
@@ -104,6 +236,7 @@ namespace LinearAlgebra
     
     void Matrix::valInit(int val)
     {
+        #pragma omp parallel for
         for (unsigned i = 0u ; i <  _rows ; i++ )
         {
             for(unsigned j = 0u ;  j < _cols ; j++ )

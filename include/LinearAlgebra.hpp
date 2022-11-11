@@ -56,6 +56,16 @@ namespace LinearAlgebra{
             Matrix(Matrix&& mat);
             ~Matrix();
 
+            Matrix operator+(const Matrix& other)const;
+            Matrix operator-(const Matrix& other)const;
+            Matrix operator*(const Matrix& other)const;
+            Matrix operator/(const Matrix& other)const;
+
+            Matrix operator+(const int constant)const;
+            Matrix operator-(const int constant)const;
+            Matrix operator*(const int constant)const;
+            Matrix operator/(const int constant)const;
+
             Vector gpuMatrixVectorMult(const Vector& v1)const;
             Vector seqMatrixVectorMult(const Vector& v1)const;
             void randomInit(int a,int b);
