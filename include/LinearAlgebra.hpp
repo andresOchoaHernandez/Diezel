@@ -9,6 +9,7 @@ namespace LinearAlgebra{
     class Vector
     {
         unsigned _len;
+        
         int*     _vec;
 
         public:
