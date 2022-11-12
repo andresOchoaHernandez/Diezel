@@ -30,11 +30,11 @@ void test_arithmetic()
 {
     using LinearAlgebra::Vector;
 
-    Vector a{100000};
+    Vector a{10000000};
     a.valInit(1);
-    Vector b{100000};
+    Vector b{10000000};
     b.valInit(1);
-    Vector c{100000};
+    Vector c{10000000};
     c.valInit(2);
 
     Vector d = a + b;
@@ -47,7 +47,7 @@ void test_arithmetic()
 
 int main()
 {
-    test_equalityOperator();
+    //test_equalityOperator();
     test_arithmetic();
 
     return 0;

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#nvcc  -arch=sm_75 --compiler-options "-fopenmp -Wall -Wextra -Werror" test/VectorUnitTest.cpp src/Vector.cu src/Matrix.cu src/CSRMatrix.cu -I include/ -o VectorUnitTest
-nvcc  -arch=sm_75 --compiler-options "-fopenmp -Wall -Wextra -Werror" test/MatrixUnitTest.cpp src/Vector.cu src/Matrix.cu src/CSRMatrix.cu -I include/ -o MatrixUnitTest
-#nvcc  -arch=sm_75 --compiler-options "-fopenmp -Wall -Wextra -Werror" test/CSRMatrixUnitTest.cpp src/Vector.cu src/Matrix.cu src/CSRMatrix.cu -I include/ -o CSRMatrixUnitTest
+nvcc  -arch=sm_75 --compiler-options "-fopenmp -Wall -Wextra -Werror" test/VectorUnitTest.cpp src/Vector.cu src/Matrix.cu src/CSRMatrix.cu src/MeasureTime.cpp    -I include/ -o VectorUnitTest
+#nvcc  -arch=sm_75 --compiler-options "-fopenmp -Wall -Wextra -Werror" test/MatrixUnitTest.cpp src/Vector.cu src/Matrix.cu src/CSRMatrix.cu src/MeasureTime.cpp    -I include/ -o MatrixUnitTest
+#nvcc  -arch=sm_75 --compiler-options "-fopenmp -Wall -Wextra -Werror" test/CSRMatrixUnitTest.cpp src/Vector.cu src/Matrix.cu src/CSRMatrix.cu src/MeasureTime.cpp -I include/ -o CSRMatrixUnitTest
 
-#./VectorUnitTest
-#rm VectorUnitTest
-./MatrixUnitTest
-rm MatrixUnitTest
+./VectorUnitTest
+rm VectorUnitTest
+#./MatrixUnitTest
+#rm MatrixUnitTest
 #./CSRMatrixUnitTest
 #rm CSRMatrixUnitTest
