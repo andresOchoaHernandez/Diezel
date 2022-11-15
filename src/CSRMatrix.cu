@@ -59,7 +59,7 @@ namespace LinearAlgebra
     }
     CSRMatrix::~CSRMatrix(){delete[] _rows;delete[] _cols;delete[] _vals;}
 
-    Vector CSRMatrix::gpuMatrixVectorMult(const Vector& v1) const
+    Vector CSRMatrix::gpu_matrixVectorMult(const Vector& v1) const
     {
         if(_nCols != v1.len()) throw std::runtime_error{"Matrix dimensions and vector dimensions don't match"};
 
@@ -109,7 +109,7 @@ namespace LinearAlgebra
 
         return rv;
     }
-    Vector CSRMatrix::seqMatrixVectorMult(const Vector& v1) const
+    Vector CSRMatrix::matrixVectorMult(const Vector& v1) const
     {
         if(_nCols != v1.len()) throw std::runtime_error("Matrix and Vector's dimensions don't match!");
 
@@ -119,6 +119,8 @@ namespace LinearAlgebra
         unsigned endRow   = 0u;
 
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+        #pragma omp parallel for
         for(unsigned i = 0u; i < _nRows ; i++ )
         {
             startRow = _rows[i];
@@ -126,10 +128,13 @@ namespace LinearAlgebra
 
             rv[i] = 0;
 
+            int acc = 0;
             for(unsigned j = startRow; j < endRow; j++)
             {
-                rv[i] += _vals[j] * v1[_cols[j]];
-            } 
+                acc += _vals[j] * v1[_cols[j]];
+            }
+
+            rv[i] = acc; 
         }
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::cout << "Sequential csr matrix vector multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;

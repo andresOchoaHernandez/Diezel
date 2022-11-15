@@ -204,14 +204,19 @@ namespace LinearAlgebra
         Vector rv{_rows};
 
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+        #pragma omp parallel for
         for( unsigned i = 0u; i < _rows; i++ )
         {
             rv[i] = 0;
 
+            int acc = 0;
             for( unsigned j = 0u; j < _cols; j++ )
             {
-                rv[i] += _data[i*_cols + j] * v1[j]; 
+                acc += _data[i*_cols + j] * v1[j]; 
             }
+
+            rv[i] = acc;
         }
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::cout << "Sequential matrix vector multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;

@@ -4,7 +4,6 @@
 
 #include "LinearAlgebra.hpp"
 #include "VectorKernels.cu"
-#include "MeasureTime.hpp"
 
 namespace LinearAlgebra
 {
@@ -33,15 +32,11 @@ namespace LinearAlgebra
 
         Vector result{_len};
         
-        MeasureTime::Timer t;
-
-        t.begin();
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i] + other[i];
         }
-        t.end("[Vector] sum");
 
         return result;
     }
@@ -51,15 +46,11 @@ namespace LinearAlgebra
         if( _len != other.len()) throw std::runtime_error{"Vectors dimensions don't match"};
         Vector result{_len};
 
-        MeasureTime::Timer t;
-
-        t.begin();
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i]- other[i];
         }
-        t.end("[Vector] diff");
 
         return result;
     }
@@ -69,15 +60,12 @@ namespace LinearAlgebra
         if( _len != other.len()) throw std::runtime_error{"Vectors dimensions don't match"};
         
         Vector result{_len};
-        MeasureTime::Timer t;
 
-        t.begin();
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i]*other[i];
         }
-        t.end("[Vector] mult");
 
         return result;
     }
@@ -88,15 +76,11 @@ namespace LinearAlgebra
         
         Vector result{_len};
 
-        MeasureTime::Timer t;
-
-        t.begin();
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i] / other[i];
         }
-        t.end("[Vector] div");
 
         return result;
     }
@@ -105,15 +89,11 @@ namespace LinearAlgebra
     {   
         Vector result{_len};
 
-        MeasureTime::Timer t;
-
-        t.begin();
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i] + constant;
         }
-        t.end("[Vector] sum");
 
         return result;
     }
@@ -122,15 +102,12 @@ namespace LinearAlgebra
     {
         Vector result{_len};
 
-        MeasureTime::Timer t;
-
-        t.begin();
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i] - constant;
         }
-        t.end("[Vector] diff");
+
         return result;
     }
 
@@ -138,15 +115,12 @@ namespace LinearAlgebra
     {
         Vector result{_len};
 
-        MeasureTime::Timer t;
-
-        t.begin();
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i] * constant;
         }
-        t.end("[Vector] mult");
+
         return result;
     }
 
@@ -154,16 +128,12 @@ namespace LinearAlgebra
     {
         Vector result{_len};
 
-        MeasureTime::Timer t;
-
-        t.begin();
-
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++ )
         {
             result[i] = _vec[i] / constant;
         }
-        t.end("[Vector] div");
+
         return result;
     }
 
@@ -187,14 +157,9 @@ namespace LinearAlgebra
         const unsigned numberOfBlocks = _len < threadsPerBlock? 1u: (_len % threadsPerBlock == 0u? _len/threadsPerBlock:_len/threadsPerBlock +1u);
         dim3 dimGrid(numberOfBlocks,1,1);
         dim3 dimBlock(threadsPerBlock,1,1);
-
-        MeasureTime::Timer t;
-        t.begin();
         
         vectorDifKernel<<<dimGrid,dimBlock>>>(v1_device,v2_device,rv_device,_len);
         cudaDeviceSynchronize();
-
-        t.end("[Vector] gpu diff");
 
         cudaMemcpy(&rv[0u],rv_device,sizeof(int)*rv.len(),cudaMemcpyDeviceToHost);
 
@@ -219,22 +184,16 @@ namespace LinearAlgebra
         std::mt19937 rng(dev());
         std::uniform_int_distribution<std::mt19937::result_type> dist(a,b);
 
-        MeasureTime::Timer t;
-        t.begin();
         #pragma omp parallel for
         for (unsigned i = 0u ; i < _len ; i++ )
             _vec[i] = dist(rng);
-        t.end("[Vector] randomInit");
     }
 
     void Vector::valInit(int val)
     {        
-        MeasureTime::Timer t;
-        t.begin();
         #pragma omp parallel for
         for (unsigned i = 0u ; i < _len ; i++ )
             _vec[i] = val;
-        t.end("[Vector] valInit");
     }
 
     unsigned Vector::len()const{ return _len; }

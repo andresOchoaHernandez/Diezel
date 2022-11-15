@@ -105,9 +105,11 @@ namespace LinearAlgebra{
             CSRMatrix(CSRMatrix&& mat);
             ~CSRMatrix();
 
-            Vector gpuMatrixVectorMult(const Vector& v1)const;
-            Vector seqMatrixVectorMult(const Vector& v1)const;
             void randomInit(int a,int b);
+
+            Vector matrixVectorMult(const Vector& v1)const;
+
+            Vector gpu_matrixVectorMult(const Vector& v1)const;
 
             Matrix toMatrix();
 

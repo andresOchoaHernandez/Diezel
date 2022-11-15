@@ -1,54 +1,46 @@
 #include <cassert>
-#include <chrono>
-#include <iostream>
 
 #include "LinearAlgebra.hpp"
+#include "MeasureTime.hpp"
 
-void test_equalityOperator()
+void test_equlityOperator()
 {
-    using LinearAlgebra::Vector;
-
-    Vector a{100};
-    a.valInit(1);
-
-    Vector b{100};
-    b.valInit(1);
-
-    assert(a == b);
-
-    b.valInit(2);
-
-    assert(!(a == b));
-
-    Vector c{10};
-    c.valInit(1);
-
-    assert(!(a == c));
+    //TODO:
 }
 
-void test_arithmetic()
+void test_randomInit()
 {
-    using LinearAlgebra::Vector;
+    //TODO:
+}
 
-    Vector a{10000000};
-    a.valInit(1);
-    Vector b{10000000};
-    b.valInit(1);
-    Vector c{10000000};
-    c.valInit(2);
+void test_valInit()
+{
+    //TODO:
+}
 
-    Vector d = a + b;
-    assert(c == d);
+void test_vectorArithmethic()
+{
+    //TODO:
+}
 
-    Vector r1 = a + 1;
-    assert(c == r1);
+void test_constantArithmethic()
+{
+    //TODO:
+}
 
+void test_gpuArithmethic()
+{
+    //TODO:
 }
 
 int main()
 {
-    //test_equalityOperator();
-    test_arithmetic();
-
+    test_equlityOperator();
+    test_randomInit();
+    test_valInit();
+    test_vectorArithmethic();
+    test_constantArithmethic();
+    test_gpuArithmethic();
+    
     return 0;
 }
