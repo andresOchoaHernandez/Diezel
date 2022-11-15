@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
@@ -50,6 +51,8 @@ void test_matrixToCSRConversion()
 
 int main()
 {
+    std::cout << "Matrix test" << std::endl;
+
     test_equlityOperator();
     test_randomInit();
     test_valInit();

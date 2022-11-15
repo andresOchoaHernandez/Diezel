@@ -190,7 +190,7 @@ namespace LinearAlgebra
     }
 
     void Vector::valInit(int val)
-    {        
+    {
         #pragma omp parallel for
         for (unsigned i = 0u ; i < _len ; i++ )
             _vec[i] = val;

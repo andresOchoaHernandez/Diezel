@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
@@ -35,6 +36,14 @@ void test_gpuArithmethic()
 
 int main()
 {
+    std::cout << "Vector test" << std::endl;
+
+    using LinearAlgebra::Vector;
+
+    Vector a{5};
+
+    a.valInit(1);
+
     test_equlityOperator();
     test_randomInit();
     test_valInit();
