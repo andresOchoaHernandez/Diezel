@@ -4,7 +4,7 @@
 
 namespace LinearAlgebra{
 
-    class Vector; class Matrix; class CSRMatrix;
+    class Vector; class Matrix; class CSRMatrix;class CSCMatrix;
 
     class Vector
     {
@@ -77,6 +77,7 @@ namespace LinearAlgebra{
             Matrix gpu_matrixMultiplication(const Matrix& mat)const;
 
             CSRMatrix toCSRMatrix() const;
+            CSCMatrix toCSCMatrix() const;
 
             unsigned rows()const;
             unsigned cols()const;
@@ -111,7 +112,7 @@ namespace LinearAlgebra{
 
             Vector gpu_matrixVectorMult(const Vector& v1)const;
 
-            Matrix toMatrix();
+            Matrix toMatrix() const;
 
             unsigned  rows()const;
             unsigned  cols()const;
@@ -121,5 +122,39 @@ namespace LinearAlgebra{
             int*      getValsArray();
 
             friend std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand);
+    };
+
+    class CSCMatrix
+    {
+        unsigned  _nRows;
+        unsigned  _nCols;
+        unsigned  _nNzElems;
+
+        unsigned *_cols;
+        unsigned *_rows;
+        int      *_vals;
+
+        public:
+            CSCMatrix(unsigned nRows,unsigned nCols, unsigned nNzElems);
+            CSCMatrix(const CSCMatrix& matrix);
+            CSCMatrix(CSCMatrix&& mat);
+            ~CSCMatrix();
+
+            void randomInit(int a,int b);
+
+            Vector matrixVectorMult(const Vector& v1)const;
+
+            Vector gpu_matrixVectorMult(const Vector& v1)const;
+
+            Matrix toMatrix() const;
+
+            unsigned  rows()const;
+            unsigned  cols()const;
+            unsigned  nonZeroElements()const;
+            unsigned* getColsArray();
+            unsigned* getRowsArray();
+            int*      getValsArray();
+
+            friend std::ostream& operator<<(std::ostream& stream, const CSCMatrix& operand);
     };
 }

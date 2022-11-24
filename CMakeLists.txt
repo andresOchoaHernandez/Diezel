@@ -48,6 +48,7 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU AND OpenMP_CXX_FOUND)
         PRIVATE ${PROJECT_SOURCE_DIR}/src/Vector.cu
         PRIVATE ${PROJECT_SOURCE_DIR}/src/Matrix.cu
         PRIVATE ${PROJECT_SOURCE_DIR}/src/CSRMatrix.cu
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/CSCMatrix.cu
     )
 
     target_link_libraries(LinearAlgebra PRIVATE OpenMP::OpenMP_CXX)
@@ -75,6 +76,12 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU AND OpenMP_CXX_FOUND)
     target_link_libraries(CSRMatrixUnitTest LinearAlgebra)
 
     add_test(NAME csrMatrixTest WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/ COMMAND ./CSRMatrixUnitTest)
+
+    add_executable(CSCMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSCMatrixUnitTest.cpp)
+    
+    target_link_libraries(CSCMatrixUnitTest LinearAlgebra)
+
+    add_test(NAME cscMatrixTest WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/ COMMAND ./CSCMatrixUnitTest)
     #===================================================================
 
 endif()

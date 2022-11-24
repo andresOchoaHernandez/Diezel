@@ -214,7 +214,7 @@ namespace LinearAlgebra
         }
     }
 
-    Matrix CSRMatrix::toMatrix()
+    Matrix CSRMatrix::toMatrix() const
     {
         Matrix result{_nRows,_nCols};
         result.valInit(0);

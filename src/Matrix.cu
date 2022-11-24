@@ -291,10 +291,12 @@ namespace LinearAlgebra
     CSRMatrix Matrix::toCSRMatrix() const
     {
         unsigned nonZeroElements = 0u;
-        bool emptyRow = true;
+        bool emptyRow;
 
         for(unsigned i = 0u ; i < _rows ; i++)
         {
+            emptyRow = true;
+
             for(unsigned j = 0u ; j < _cols ; j++)
             {
                 if(_data[i*_cols + j] != 0)
@@ -332,6 +334,54 @@ namespace LinearAlgebra
         }
 
         return csrMatrix;
+    }
+
+    CSCMatrix Matrix::toCSCMatrix() const
+    {
+        unsigned nonZeroElements = 0u;
+        bool emptyColumn;
+
+        for(unsigned j = 0u ; j < _cols ; j++)
+        {
+            emptyColumn = true; 
+
+            for(unsigned i = 0u ; i < _rows ; i++)
+            {
+                if(_data[i*_cols + j] != 0)
+                {
+                    nonZeroElements++;
+                    emptyColumn = false;
+                }
+            }
+
+            if(emptyColumn) throw std::runtime_error{"CSCMatrix doesn't allow empty columns"};
+        }
+
+        CSCMatrix cscMatrix{_rows,_cols,nonZeroElements};
+
+        unsigned* colsVec = cscMatrix.getColsArray();
+        unsigned* rowsVec = cscMatrix.getRowsArray();
+        int*      valsVec = cscMatrix.getValsArray();
+
+        unsigned nonZeroElemIndex = 0u;
+        colsVec[0u] = 0u;
+
+        for(unsigned j = 0u ; j < _cols ; j++)
+        {
+            for(unsigned i = 0u ; i < _rows ; i++)
+            {
+                if(_data[i*cscMatrix.cols() + j] != 0)
+                {
+                    rowsVec[nonZeroElemIndex] = i;
+                    valsVec[nonZeroElemIndex] = _data[i*cscMatrix.cols() + j];
+                    nonZeroElemIndex++;
+                }
+            }
+
+            colsVec[j + 1u] = nonZeroElemIndex;
+        }
+        
+        return cscMatrix;
     }
 
     unsigned Matrix::rows()const{return _rows;}
