@@ -1,3 +1,7 @@
+#include <vector>
+#include <bits/stdc++.h>
+#include <iostream>
+
 #include "LinearAlgebra.hpp"
 #include "CSCMatrixKernels.cu"
 
@@ -93,9 +97,50 @@ namespace LinearAlgebra
 
     CSRMatrix CSCMatrix::toCSR() const
     {
-        //TODO: Urgently
+        struct triplet
+        {
+            unsigned row;
+            unsigned column;
+            int value;
 
-        return {1,1,1};
+            bool operator<(const triplet& other) const
+            {
+                return row == other.row ? column < other.column : row < other.row;
+            }
+        };
+        
+        CSRMatrix result{_nRows,_nCols,_nNzElems};
+
+        std::vector<triplet> coordinates;
+
+        unsigned columnIndex = 0u;
+
+        for(unsigned i = 0u; i < _nCols ; i++)
+        {
+            unsigned startCol = _cols[i];
+            unsigned endCol = _cols[i+1u];
+
+            for(unsigned j = startCol ; j < endCol ; j++)
+            {
+                triplet elem;
+                elem.row    = _rows[j];
+                elem.column = columnIndex;
+                elem.value  = _vals[j];
+            
+                coordinates.push_back(elem);
+            }
+
+            columnIndex++;
+        }
+
+        std::sort(coordinates.begin(),coordinates.end());
+
+        for(triplet e : coordinates)
+        {
+            std::cout << "{" << e.row << ","<< e.column << "," << e.value << "}" << std::endl;
+        }
+
+        return result;
     }
 
     unsigned  CSCMatrix::rows()const

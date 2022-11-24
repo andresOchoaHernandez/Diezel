@@ -4,6 +4,26 @@
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
 
+void test_CSCToCSR()
+{
+    using LinearAlgebra::CSRMatrix;
+    using LinearAlgebra::CSCMatrix;
+    using LinearAlgebra::Matrix;
+
+    Matrix a{3u,5u};
+
+    a.valInit(0);
+
+    a[2] = 1; a[8] = 3;
+    a[3] = 2; a[9] = 4;
+    a[4] = 3; a[10] = 2;
+    a[5] = 1; a[11] = 1;
+    a[7] = 5; a[13] = 1;
+
+    CSCMatrix b = a.toCSCMatrix();
+
+    b.toCSR();
+}
 
 void test_matrixVectorMultSpeedUp()
 {
@@ -85,8 +105,9 @@ void test_matrixVectorMult()
 
 int main()
 {
-    test_matrixVectorMult();
-    test_matrixVectorMultSpeedUp();
+    //test_matrixVectorMult();
+    //test_matrixVectorMultSpeedUp();
+    test_CSCToCSR();
 
     return 0;
 }
