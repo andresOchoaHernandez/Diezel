@@ -58,6 +58,12 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU AND OpenMP_CXX_FOUND)
     enable_testing()
 
     add_executable(VectorUnitTest ${PROJECT_SOURCE_DIR}/test/VectorUnitTest.cpp)
+
+    target_sources(
+        VectorUnitTest
+        PRIVATE  ${PROJECT_SOURCE_DIR}/test/MeasureTime.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/test/MeasureTime.cpp
+    )
     
     target_link_libraries(VectorUnitTest LinearAlgebra)
 
@@ -65,6 +71,12 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU AND OpenMP_CXX_FOUND)
 
 
     add_executable(MatrixUnitTest ${PROJECT_SOURCE_DIR}/test/MatrixUnitTest.cpp)
+
+    target_sources(
+        MatrixUnitTest
+        PRIVATE  ${PROJECT_SOURCE_DIR}/test/MeasureTime.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/test/MeasureTime.cpp
+    )
     
     target_link_libraries(MatrixUnitTest LinearAlgebra)
 
@@ -72,12 +84,24 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU AND OpenMP_CXX_FOUND)
 
 
     add_executable(CSRMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSRMatrixUnitTest.cpp)
+
+    target_sources(
+        CSRMatrixUnitTest
+        PRIVATE  ${PROJECT_SOURCE_DIR}/test/MeasureTime.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/test/MeasureTime.cpp
+    )
     
     target_link_libraries(CSRMatrixUnitTest LinearAlgebra)
 
     add_test(NAME csrMatrixTest WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/build/ COMMAND ./CSRMatrixUnitTest)
 
     add_executable(CSCMatrixUnitTest ${PROJECT_SOURCE_DIR}/test/CSCMatrixUnitTest.cpp)
+
+    target_sources(
+        CSCMatrixUnitTest
+        PRIVATE  ${PROJECT_SOURCE_DIR}/test/MeasureTime.hpp
+        PRIVATE ${PROJECT_SOURCE_DIR}/test/MeasureTime.cpp
+    )
     
     target_link_libraries(CSCMatrixUnitTest LinearAlgebra)
 

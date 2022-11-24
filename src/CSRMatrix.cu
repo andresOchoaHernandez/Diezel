@@ -90,11 +90,8 @@ namespace LinearAlgebra
         dim3 dimGrid(numberOfBlocks,1,1);
         dim3 dimBlock(threadsPerBlock,1,1);
 
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         csrMatrixVectorMultKernel<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
         cudaDeviceSynchronize();
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Cuda kernel for csr matrix vector multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
 
         cudaMemcpy(&rv[0u],rv_device,sizeof(int)*rv.len(),cudaMemcpyDeviceToHost);
 
@@ -118,8 +115,6 @@ namespace LinearAlgebra
         unsigned startRow = 0u; 
         unsigned endRow   = 0u;
 
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
         #pragma omp parallel for
         for(unsigned i = 0u; i < _nRows ; i++ )
         {
@@ -136,9 +131,6 @@ namespace LinearAlgebra
 
             rv[i] = acc; 
         }
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Sequential csr matrix vector multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
-
 
         return rv;
     }
@@ -233,6 +225,12 @@ namespace LinearAlgebra
 
         return result;
     }
+
+    CSCMatrix CSRMatrix::toCSC() const
+    {
+        //TODO:
+        return {1u,1u,1u};
+    } 
 
     unsigned  CSRMatrix::rows()const{return _nRows;}
     unsigned  CSRMatrix::cols()const{return _nCols;}

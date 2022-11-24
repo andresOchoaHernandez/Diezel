@@ -113,6 +113,7 @@ namespace LinearAlgebra{
             Vector gpu_matrixVectorMult(const Vector& v1)const;
 
             Matrix toMatrix() const;
+            CSCMatrix toCSC() const;
 
             unsigned  rows()const;
             unsigned  cols()const;
@@ -147,6 +148,7 @@ namespace LinearAlgebra{
             Vector gpu_matrixVectorMult(const Vector& v1)const;
 
             Matrix toMatrix() const;
+            CSRMatrix toCSR() const;
 
             unsigned  rows()const;
             unsigned  cols()const;

@@ -91,6 +91,13 @@ namespace LinearAlgebra
         return {1,1};
     }
 
+    CSRMatrix CSCMatrix::toCSR() const
+    {
+        //TODO: Urgently
+
+        return {1,1,1};
+    }
+
     unsigned  CSCMatrix::rows()const
     {
         return _nRows;
