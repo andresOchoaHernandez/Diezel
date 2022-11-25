@@ -122,6 +122,8 @@ namespace LinearAlgebra{
             unsigned* getColsArray();
             int*      getValsArray();
 
+            bool operator==(const CSRMatrix& other) const;
+
             friend std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand);
     };
 
@@ -156,6 +158,8 @@ namespace LinearAlgebra{
             unsigned* getColsArray();
             unsigned* getRowsArray();
             int*      getValsArray();
+
+            bool operator==(const CSCMatrix& other) const;
 
             friend std::ostream& operator<<(std::ostream& stream, const CSCMatrix& operand);
     };

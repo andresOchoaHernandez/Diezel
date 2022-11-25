@@ -239,6 +239,11 @@ namespace LinearAlgebra
     unsigned* CSRMatrix::getColsArray(){return _cols;}
     int*      CSRMatrix::getValsArray(){return _vals;}
 
+    bool CSRMatrix::operator==(const CSRMatrix& other) const
+    {
+        //TODO:
+    }
+
     std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand)
     {
         stream << "rows | ";

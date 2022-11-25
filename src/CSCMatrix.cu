@@ -186,6 +186,11 @@ namespace LinearAlgebra
         return _vals;
     }
 
+    bool CSCMatrix::operator==(const CSCMatrix& other) const
+    {
+        //TODO:
+    }
+
     std::ostream& operator<<(std::ostream& stream, const CSCMatrix& operand)
     {
         stream << "cols | ";
