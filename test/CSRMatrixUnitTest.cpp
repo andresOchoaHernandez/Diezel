@@ -4,6 +4,26 @@
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
 
+void test_another_test()
+{
+    using LinearAlgebra::CSRMatrix;
+    using LinearAlgebra::CSCMatrix;
+    using LinearAlgebra::Matrix;
+
+    Matrix a{3,5};
+    a.randomInit(0,1);
+
+    std::cout << "Matrix explicit form: " << std::endl << a; 
+
+    CSCMatrix b = a.toCSCMatrix();
+
+    std::cout << "Matrix CSC form: " << std::endl << b;
+
+    CSRMatrix f = b.toCSR();
+
+    std::cout << "Matrix CSR form: " << std::endl << f;
+}
+
 void test_CSCToCSR()
 {
     using LinearAlgebra::CSRMatrix;
@@ -20,9 +40,14 @@ void test_CSCToCSR()
     a[5] = 1; a[11] = 1;
     a[7] = 5; a[13] = 1;
 
+    std::cout << "Explicit format: " << std::endl << a;
+
     CSCMatrix b = a.toCSCMatrix();
 
-    b.toCSR();
+    std::cout << "CSC format: " << std::endl << b;
+
+    CSRMatrix res = b.toCSR();
+    std::cout << "CSR format: " << std::endl << res;
 }
 
 void test_matrixVectorMultSpeedUp()
@@ -107,7 +132,8 @@ int main()
 {
     //test_matrixVectorMult();
     //test_matrixVectorMultSpeedUp();
-    test_CSCToCSR();
+    //test_CSCToCSR();
+    test_another_test();
 
     return 0;
 }

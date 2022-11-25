@@ -135,10 +135,28 @@ namespace LinearAlgebra
 
         std::sort(coordinates.begin(),coordinates.end());
 
-        for(triplet e : coordinates)
+        unsigned* rowsVec = result.getRowsArray();
+        unsigned* colsVec = result.getColsArray();
+        int*      valsVec = result.getValsArray();
+
+        unsigned rowIndex = 0u;
+        rowsVec[rowIndex] = 0u;
+
+        unsigned currentRow = 0u;
+
+        for(unsigned element = 0u ; element < _nNzElems ; element++)
         {
-            std::cout << "{" << e.row << ","<< e.column << "," << e.value << "}" << std::endl;
+            if(currentRow != coordinates[element].row)
+            {
+                rowsVec[++rowIndex] = element;
+                currentRow = coordinates[element].row;
+            }
+
+            colsVec[element] = coordinates[element].column;
+            valsVec[element] = coordinates[element].value;
         }
+
+        rowsVec[_nRows] = _nNzElems;
 
         return result;
     }
