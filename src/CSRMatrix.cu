@@ -242,6 +242,7 @@ namespace LinearAlgebra
     bool CSRMatrix::operator==(const CSRMatrix& other) const
     {
         //TODO:
+        return false;
     }
 
     std::ostream& operator<<(std::ostream& stream, const CSRMatrix& operand)

@@ -189,6 +189,7 @@ namespace LinearAlgebra
     bool CSCMatrix::operator==(const CSCMatrix& other) const
     {
         //TODO:
+        return false;
     }
 
     std::ostream& operator<<(std::ostream& stream, const CSCMatrix& operand)
