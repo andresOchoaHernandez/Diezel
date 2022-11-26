@@ -36,13 +36,19 @@ void test_gpuArithmethic()
 
 int main()
 {
-    std::cout << "Vector test" << std::endl;
-
     using LinearAlgebra::Vector;
 
-    Vector a{5};
+    const unsigned size = 1000000;
 
-    a.valInit(1);
+    Vector a{size};
+
+    a.valInit(1.0);
+
+    Vector b{size};
+
+    b.valInit(1.0);
+
+    assert(a == b);
 
     test_equlityOperator();
     test_randomInit();

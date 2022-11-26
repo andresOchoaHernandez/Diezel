@@ -1,4 +1,4 @@
-__global__ void csrMatrixVectorMultKernel(const int* csrRows, const int* csrCols, const int*csrVals, const int* v1, int* rv,const unsigned rows)
+__global__ void csrMatrixVectorMultKernel(const unsigned* csrRows, const unsigned* csrCols, const double*csrVals, const double* v1, double* rv,const unsigned rows)
 {
     const unsigned row = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -11,6 +11,6 @@ __global__ void csrMatrixVectorMultKernel(const int* csrRows, const int* csrCols
 
     for(unsigned i = rowStart ; i < rowEnd ; i++ )
     {
-        rv[row] += csrVals[i] * v1[csrCols[i]];
+        rv[row] += csrVals[i] * v1[csrCols[i]]; //TODO: use an acc to limit global access memory
     }
 }

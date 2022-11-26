@@ -13,7 +13,7 @@ namespace LinearAlgebra
     _nNzElems{nNzElems},
     _cols{new unsigned[_nCols + 1u]},
     _rows{new unsigned[_nNzElems]},
-    _vals{new int[_nNzElems]}
+    _vals{new double[_nNzElems]}
     {
         if((nNzElems < _nCols) || ((_nRows * _nCols) < _nNzElems)) throw std::runtime_error{"Non Zero elements must be at least equal to Cols but less than rows x cols"};
     }
@@ -23,7 +23,7 @@ namespace LinearAlgebra
     _nNzElems{matrix._nNzElems},
     _cols{new unsigned[_nCols + 1u]},
     _rows{new unsigned[_nNzElems]},
-    _vals{new int[_nNzElems]}
+    _vals{new double[_nNzElems]}
     {
         for(unsigned i = 0u ; i <= _nCols ; i++)
         {
@@ -56,7 +56,7 @@ namespace LinearAlgebra
     }
     CSCMatrix::~CSCMatrix(){delete[] _cols;delete[] _rows;delete[] _vals;}
 
-    void CSCMatrix::randomInit(int a,int b)
+    void CSCMatrix::randomInit(double a,double b)
     {
         // TODO:
     }
@@ -101,7 +101,7 @@ namespace LinearAlgebra
         {
             unsigned row;
             unsigned column;
-            int value;
+            double   value;
 
             bool operator<(const triplet& other) const
             {
@@ -137,7 +137,7 @@ namespace LinearAlgebra
 
         unsigned* rowsVec = result.getRowsArray();
         unsigned* colsVec = result.getColsArray();
-        int*      valsVec = result.getValsArray();
+        double*   valsVec = result.getValsArray();
 
         unsigned rowIndex = 0u;
         rowsVec[rowIndex] = 0u;
@@ -181,7 +181,7 @@ namespace LinearAlgebra
     {
         return _rows;
     }
-    int*      CSCMatrix::getValsArray()
+    double*   CSCMatrix::getValsArray()
     {
         return _vals;
     }
