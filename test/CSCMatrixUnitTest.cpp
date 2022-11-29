@@ -4,6 +4,32 @@
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
 
+void test_MatVecMultBigger()
+{
+    using LinearAlgebra::Matrix;
+    using LinearAlgebra::CSCMatrix;
+    using LinearAlgebra::Vector;
+
+    const unsigned rows = 2000;
+    const unsigned cols = 3000;
+
+
+    Matrix a{rows,cols};
+    a.randomInit(0.0,0.1);
+
+    Vector x{cols};
+    x.randomInit(3.0,4.0);
+    
+
+    Vector r1 = a.matrixVectorMult(x);
+
+    CSCMatrix b = a.toCSCMatrix();
+
+    Vector r2 = b.matrixVectorMult(x);
+
+    assert(r1 == r1);
+}
+
 void test_MatVectorMult()
 {
     using LinearAlgebra::Matrix;
@@ -99,6 +125,8 @@ int main()
 {
     test_CorrectConstruction();
     test_MatVectorMult();
+
+    test_MatVecMultBigger();
 
     return 0;
 }

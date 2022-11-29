@@ -67,7 +67,7 @@ namespace LinearAlgebra
         
         Vector result{_nRows};
 
-        result.valInit(0);
+        result.valInit(0.0);
 
         for(unsigned i = 0u ; i < _nCols ; i++)
         {
