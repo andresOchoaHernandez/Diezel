@@ -4,6 +4,45 @@
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
 
+void test_csrMatrixWithEmptyRows2()
+{
+    using LinearAlgebra::CSRMatrix;
+    using LinearAlgebra::Vector;
+
+    CSRMatrix a{3,3,4};
+    unsigned* rowsVec = a.getRowsArray();
+    unsigned* colsVec = a.getColsArray();
+    double*   valsVec = a.getValsArray();
+
+    rowsVec[0] = 0; rowsVec[1] = 2; rowsVec[2] = 4; rowsVec[3] = 4;
+    colsVec[0] = 0; colsVec[1] = 2; colsVec[2] = 0; colsVec[3] = 2;
+    valsVec[0] = 1.0; valsVec[1] = 2.0; valsVec[2] = 1.0; valsVec[3] = 2.0;
+
+    std::cout << a;
+
+    Vector x{3};
+    x[0] = 1; x[1] = 2; x[2] = 3;
+
+    Vector r1 = a.matrixVectorMult(x);
+
+    std::cout << r1;
+
+    CSRMatrix b{2,3,4};
+    unsigned* r = b.getRowsArray();
+    unsigned* c = b.getColsArray();
+    double*   v = b.getValsArray();
+
+    r[0] = 0; r[1] = 2; r[2] = 4;
+    c[0] = 0; c[1] = 2; c[2] = 0; c[3] = 2;
+    v[0] = 1.0; v[1] = 2.0; v[2] = 1.0; v[3] = 2.0;
+
+    std::cout << b;
+
+    Vector r2 = b.matrixVectorMult(x);
+
+    std::cout << r2;
+}
+
 void test_csrMatrixWithEmptyRows()
 {
     // REPEAT ROW INDEX FOR EMPTY ROWS LEADS TO CORRECT BEHAVIOUR
@@ -175,8 +214,8 @@ int main()
     //test_matrixVectorMultSpeedUp();
     //test_CSCToCSR();
     //test_another_test();
-
-    test_csrMatrixWithEmptyRows();
+    //test_csrMatrixWithEmptyRows();
+    test_csrMatrixWithEmptyRows2();
 
     return 0;
 }
