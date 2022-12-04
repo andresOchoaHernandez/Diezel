@@ -2,8 +2,6 @@
 
 #include <ostream>
 
-// TODO: add support for CSR with empty rows and CSC with empty columns
-
 namespace LinearAlgebra{
 
     class Vector; class Matrix; class CSRMatrix;class CSCMatrix;

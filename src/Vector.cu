@@ -4,6 +4,7 @@
 
 #include "LinearAlgebra.hpp"
 #include "VectorKernels.cu"
+#include "utils.cpp"
 
 namespace LinearAlgebra
 {
@@ -208,7 +209,10 @@ namespace LinearAlgebra
 
         for(unsigned i = 0u ; i < _len ; i++)
         {
-            if(_vec[i] != other[i]) return false;
+            if(!areFloatNearlyEqual(_vec[i],other[i])) 
+            {
+                return false;
+            }
         }
 
         return true;
