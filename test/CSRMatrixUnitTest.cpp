@@ -210,11 +210,11 @@ void test_matrixVectorMult()
 
 int main()
 {
-    //test_matrixVectorMult();
-    //test_matrixVectorMultSpeedUp();
-    //test_CSCToCSR();
-    //test_another_test();
-    //test_csrMatrixWithEmptyRows();
+    test_matrixVectorMult();
+    test_matrixVectorMultSpeedUp();
+    test_CSCToCSR();
+    test_another_test();
+    test_csrMatrixWithEmptyRows();
     test_csrMatrixWithEmptyRows2();
 
     return 0;
