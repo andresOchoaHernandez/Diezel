@@ -91,7 +91,9 @@ namespace LinearAlgebra
         dim3 dimBlock(threadsPerBlock,1,1);
 
         csrMatrixVectorMultKernel<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
-        cudaDeviceSynchronize();
+        cudaError_t cudaerr = cudaDeviceSynchronize();
+        if (cudaerr != cudaSuccess)
+            printf("kernel launch failed with error \"%s\".\n",cudaGetErrorString(cudaerr));
 
         cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
 
