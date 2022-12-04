@@ -95,7 +95,7 @@ void test_CorrectConstruction()
 
     unsigned* colsVec = b.getColsArray();
     unsigned* rowsVec = b.getRowsArray();
-    double*   valsVec = b.getValsArray();
+    float*   valsVec = b.getValsArray();
 
     bool correct = true;
 

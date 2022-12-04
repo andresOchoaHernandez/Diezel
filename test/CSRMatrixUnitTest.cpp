@@ -12,7 +12,7 @@ void test_csrMatrixWithEmptyRows2()
     CSRMatrix a{3,3,4};
     unsigned* rowsVec = a.getRowsArray();
     unsigned* colsVec = a.getColsArray();
-    double*   valsVec = a.getValsArray();
+    float*   valsVec = a.getValsArray();
 
     rowsVec[0] = 0; rowsVec[1] = 2; rowsVec[2] = 4; rowsVec[3] = 4;
     colsVec[0] = 0; colsVec[1] = 2; colsVec[2] = 0; colsVec[3] = 2;
@@ -30,7 +30,7 @@ void test_csrMatrixWithEmptyRows2()
     CSRMatrix b{2,3,4};
     unsigned* r = b.getRowsArray();
     unsigned* c = b.getColsArray();
-    double*   v = b.getValsArray();
+    float*   v = b.getValsArray();
 
     r[0] = 0; r[1] = 2; r[2] = 4;
     c[0] = 0; c[1] = 2; c[2] = 0; c[3] = 2;
@@ -53,7 +53,7 @@ void test_csrMatrixWithEmptyRows()
     CSRMatrix a{3,3,4};
     unsigned* rowsVec = a.getRowsArray();
     unsigned* colsVec = a.getColsArray();
-    double*   valsVec = a.getValsArray();
+    float*   valsVec = a.getValsArray();
 
     rowsVec[0] = 0; rowsVec[1] = 1; rowsVec[2] = 1; rowsVec[3] = 4;
     colsVec[0] = 2; colsVec[1] = 0; colsVec[2] = 1; colsVec[3] = 2;
@@ -71,7 +71,7 @@ void test_csrMatrixWithEmptyRows()
     CSRMatrix b{2,3,4};
     unsigned* r = b.getRowsArray();
     unsigned* c = b.getColsArray();
-    double*   v = b.getValsArray();
+    float*   v = b.getValsArray();
 
     r[0] = 0; r[1] = 1; r[2] = 4;
     c[0] = 2; c[1] = 0; c[2] = 1; c[3] = 2;

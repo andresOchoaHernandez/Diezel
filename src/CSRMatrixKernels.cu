@@ -1,4 +1,4 @@
-__global__ void csrMatrixVectorMultKernel(const unsigned* csrRows, const unsigned* csrCols, const double*csrVals, const double* v1, double* rv,const unsigned rows)
+__global__ void csrMatrixVectorMultKernel(const unsigned* csrRows, const unsigned* csrCols, const float*csrVals, const float* v1, float* rv,const unsigned rows)
 {
     const unsigned row = blockIdx.x * blockDim.x + threadIdx.x;
 

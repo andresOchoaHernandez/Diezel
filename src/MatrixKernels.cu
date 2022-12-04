@@ -1,10 +1,10 @@
-__global__ void matrixVectorMultKernel(const double* matrix, const double* v1, double* rv, const unsigned rows, const unsigned cols)
+__global__ void matrixVectorMultKernel(const float* matrix, const float* v1, float* rv, const unsigned rows, const unsigned cols)
 {
     const unsigned row = blockIdx.x * blockDim.x + threadIdx.x;
 
     if(row >= rows) return;
 
-    double acc = 0;
+    float acc = 0;
 
     for(unsigned i = 0u; i < cols; i++ )
     {

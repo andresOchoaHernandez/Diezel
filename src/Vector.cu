@@ -7,8 +7,8 @@
 
 namespace LinearAlgebra
 {
-    Vector::Vector(unsigned len):_len{len},_vec{new double[_len]}{}
-    Vector::Vector(const Vector& vector):_len{vector._len},_vec{new double[_len]}
+    Vector::Vector(unsigned len):_len{len},_vec{new float[_len]}{}
+    Vector::Vector(const Vector& vector):_len{vector._len},_vec{new float[_len]}
     {
         #pragma omp parallel for
         for(unsigned i = 0u ; i < _len ; i++)
@@ -85,7 +85,7 @@ namespace LinearAlgebra
         return result;
     }
 
-    Vector Vector::operator+(const double constant)const
+    Vector Vector::operator+(const float constant)const
     {   
         Vector result{_len};
 
@@ -98,7 +98,7 @@ namespace LinearAlgebra
         return result;
     }
 
-    Vector Vector::operator-(const double constant)const
+    Vector Vector::operator-(const float constant)const
     {
         Vector result{_len};
 
@@ -111,7 +111,7 @@ namespace LinearAlgebra
         return result;
     }
 
-    Vector Vector::operator*(const double constant)const
+    Vector Vector::operator*(const float constant)const
     {
         Vector result{_len};
 
@@ -124,7 +124,7 @@ namespace LinearAlgebra
         return result;
     }
 
-    Vector Vector::operator/(const double constant)const
+    Vector Vector::operator/(const float constant)const
     {
         Vector result{_len};
 
@@ -144,14 +144,14 @@ namespace LinearAlgebra
 
         Vector rv{_len};
 
-        double *v1_device;double *v2_device;double *rv_device;
+        float *v1_device;float *v2_device;float *rv_device;
 
-        cudaMalloc(&v1_device,sizeof(double)*_len);
-        cudaMalloc(&v2_device,sizeof(double)*v2.len());
-        cudaMalloc(&rv_device,sizeof(double)*rv.len());
+        cudaMalloc(&v1_device,sizeof(float)*_len);
+        cudaMalloc(&v2_device,sizeof(float)*v2.len());
+        cudaMalloc(&rv_device,sizeof(float)*rv.len());
 
-        cudaMemcpy(v1_device,_vec,sizeof(double)*_len,cudaMemcpyHostToDevice);
-        cudaMemcpy(v2_device,&v2[0u],sizeof(double)*v2.len(),cudaMemcpyHostToDevice);
+        cudaMemcpy(v1_device,_vec,sizeof(float)*_len,cudaMemcpyHostToDevice);
+        cudaMemcpy(v2_device,&v2[0u],sizeof(float)*v2.len(),cudaMemcpyHostToDevice);
 
         const unsigned threadsPerBlock = 1024u;
         const unsigned numberOfBlocks = _len < threadsPerBlock? 1u: (_len % threadsPerBlock == 0u? _len/threadsPerBlock:_len/threadsPerBlock +1u);
@@ -161,7 +161,7 @@ namespace LinearAlgebra
         vectorDifKernel<<<dimGrid,dimBlock>>>(v1_device,v2_device,rv_device,_len);
         cudaDeviceSynchronize();
 
-        cudaMemcpy(&rv[0u],rv_device,sizeof(double)*rv.len(),cudaMemcpyDeviceToHost);
+        cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
 
         cudaFree(v1_device);
         cudaFree(v2_device);
@@ -178,18 +178,18 @@ namespace LinearAlgebra
         return v2;
     }
 
-    void Vector::randomInit(double a, double b)
+    void Vector::randomInit(float a, float b)
     {
         std::random_device dev;
         std::mt19937 rng(dev());
-        std::uniform_real_distribution<double> dist(a,b);
+        std::uniform_real_distribution<float> dist(a,b);
 
         #pragma omp parallel for
         for (unsigned i = 0u ; i < _len ; i++ )
             _vec[i] = dist(rng);
     }
 
-    void Vector::valInit(double val)
+    void Vector::valInit(float val)
     {
         #pragma omp parallel for
         for (unsigned i = 0u ; i < _len ; i++ )
@@ -197,10 +197,10 @@ namespace LinearAlgebra
     }
 
     unsigned Vector::len()const{ return _len; }
-    double* Vector::getVec(){ return _vec; }
+    float* Vector::getVec(){ return _vec; }
 
-    double& Vector::operator [](unsigned i){return _vec[i];}
-    const double& Vector::operator [](unsigned i)const{return _vec[i];}
+    float& Vector::operator [](unsigned i){return _vec[i];}
+    const float& Vector::operator [](unsigned i)const{return _vec[i];}
 
     bool Vector::operator==(const Vector& other) const
     {

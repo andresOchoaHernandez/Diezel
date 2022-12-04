@@ -12,7 +12,7 @@ namespace LinearAlgebra{
     {
         unsigned _len;
         
-        double*  _vec;
+        float*  _vec;
 
         public:
             Vector(unsigned len);
@@ -20,27 +20,27 @@ namespace LinearAlgebra{
             Vector(Vector&& v);
             ~Vector();
 
-            void randomInit(double a,double b);
-            void valInit(double val);
+            void randomInit(float a,float b);
+            void valInit(float val);
 
             Vector operator+(const Vector& other)const;
             Vector operator-(const Vector& other)const;
             Vector operator*(const Vector& other)const;
             Vector operator/(const Vector& other)const;
 
-            Vector operator+(const double constant)const;
-            Vector operator-(const double constant)const;
-            Vector operator*(const double constant)const;
-            Vector operator/(const double constant)const;
+            Vector operator+(const float constant)const;
+            Vector operator-(const float constant)const;
+            Vector operator*(const float constant)const;
+            Vector operator/(const float constant)const;
 
             Vector gpu_diff(const Vector& v2)const;
             Vector gpu_sum(const Vector& v2)const;
 
             unsigned len()const;
-            double*  getVec();
+            float*  getVec();
 
-            double& operator [](unsigned i);
-            const double& operator [](unsigned i)const;
+            float& operator [](unsigned i);
+            const float& operator [](unsigned i)const;
             bool operator==(const Vector& other) const;
 
             friend std::ostream& operator<<(std::ostream& stream, const Vector& operand);
@@ -51,7 +51,7 @@ namespace LinearAlgebra{
         unsigned _rows;
         unsigned _cols;
 
-        double*  _data;
+        float*  _data;
 
         public:
             Matrix(unsigned rows, unsigned cols);
@@ -59,18 +59,18 @@ namespace LinearAlgebra{
             Matrix(Matrix&& mat);
             ~Matrix();
 
-            void randomInit(double a,double b);
-            void valInit(double val);
+            void randomInit(float a,float b);
+            void valInit(float val);
 
             Matrix operator+(const Matrix& other)const;
             Matrix operator-(const Matrix& other)const;
             Matrix operator*(const Matrix& other)const;
             Matrix operator/(const Matrix& other)const;
 
-            Matrix operator+(const double constant)const;
-            Matrix operator-(const double constant)const;
-            Matrix operator*(const double constant)const;
-            Matrix operator/(const double constant)const;
+            Matrix operator+(const float constant)const;
+            Matrix operator-(const float constant)const;
+            Matrix operator*(const float constant)const;
+            Matrix operator/(const float constant)const;
 
             Vector matrixVectorMult(const Vector& v1)const;
             Matrix matrixMultiplication(const Matrix& mat)const;
@@ -83,10 +83,10 @@ namespace LinearAlgebra{
 
             unsigned rows()const;
             unsigned cols()const;
-            double*  data();
+            float*  data();
 
-            double& operator [](unsigned i);
-            const double& operator [](unsigned i)const;
+            float& operator [](unsigned i);
+            const float& operator [](unsigned i)const;
             bool operator==(const Matrix& other) const;
 
             friend std::ostream& operator<<(std::ostream& stream, const Matrix& operand);
@@ -100,7 +100,7 @@ namespace LinearAlgebra{
 
         unsigned *_rows;
         unsigned *_cols;
-        double   *_vals;
+        float   *_vals;
 
         public:
             CSRMatrix(unsigned nRows,unsigned nCols, unsigned nNzElems);
@@ -108,7 +108,7 @@ namespace LinearAlgebra{
             CSRMatrix(CSRMatrix&& mat);
             ~CSRMatrix();
 
-            void randomInit(double a,double b);
+            void randomInit(float a,float b);
 
             Vector matrixVectorMult(const Vector& v1)const;
 
@@ -122,7 +122,7 @@ namespace LinearAlgebra{
             unsigned  nonZeroElements()const;
             unsigned* getRowsArray();
             unsigned* getColsArray();
-            double*   getValsArray();
+            float*   getValsArray();
 
             bool operator==(const CSRMatrix& other) const;
 
@@ -137,7 +137,7 @@ namespace LinearAlgebra{
 
         unsigned *_cols;
         unsigned *_rows;
-        double   *_vals;
+        float   *_vals;
 
         public:
             CSCMatrix(unsigned nRows,unsigned nCols, unsigned nNzElems);
@@ -145,7 +145,7 @@ namespace LinearAlgebra{
             CSCMatrix(CSCMatrix&& mat);
             ~CSCMatrix();
 
-            void randomInit(double a,double b);
+            void randomInit(float a,float b);
 
             Vector matrixVectorMult(const Vector& v1)const;
 
@@ -159,7 +159,7 @@ namespace LinearAlgebra{
             unsigned  nonZeroElements()const;
             unsigned* getColsArray();
             unsigned* getRowsArray();
-            double*   getValsArray();
+            float*   getValsArray();
 
             bool operator==(const CSCMatrix& other) const;
 

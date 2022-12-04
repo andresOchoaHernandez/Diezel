@@ -14,7 +14,7 @@ namespace LinearAlgebra
     _nNzElems{nNzElems},
     _rows{new unsigned[_nRows + 1u]},
     _cols{new unsigned[_nNzElems]},
-    _vals{new double[_nNzElems]}
+    _vals{new float[_nNzElems]}
     {
         if((nNzElems < _nRows) || ((_nRows * _nCols) < _nNzElems)) throw std::runtime_error{"Non Zero elements must be at least equal to Rows but less than rows x cols"};
     }
@@ -25,7 +25,7 @@ namespace LinearAlgebra
     _nNzElems{matrix._nNzElems},
     _rows{new unsigned[_nRows + 1u]},
     _cols{new unsigned[_nNzElems]},
-    _vals{new double[_nNzElems]}
+    _vals{new float[_nNzElems]}
     {
         for(unsigned i = 0u ; i <= _nRows ; i++)
         {
@@ -67,23 +67,23 @@ namespace LinearAlgebra
 
         unsigned* rows_device;
         unsigned* cols_device;
-        double*   vals_device; 
+        float*   vals_device; 
         
-        double* v1_device; 
-        double* rv_device;
+        float* v1_device; 
+        float* rv_device;
 
         cudaMalloc(&rows_device,sizeof(unsigned)*(_nRows + 1));
         cudaMalloc(&cols_device,sizeof(unsigned)*_nNzElems);
-        cudaMalloc(&vals_device,sizeof(double)*_nNzElems);
+        cudaMalloc(&vals_device,sizeof(float)*_nNzElems);
 
-        cudaMalloc(&v1_device,sizeof(double)*v1.len());
-        cudaMalloc(&rv_device,sizeof(double)*rv.len());
+        cudaMalloc(&v1_device,sizeof(float)*v1.len());
+        cudaMalloc(&rv_device,sizeof(float)*rv.len());
 
         cudaMemcpy(rows_device,_rows,sizeof(unsigned)*(_nRows + 1),cudaMemcpyHostToDevice);
         cudaMemcpy(cols_device,_cols,sizeof(unsigned)*_nNzElems,cudaMemcpyHostToDevice);
-        cudaMemcpy(vals_device,_vals,sizeof(double)*_nNzElems,cudaMemcpyHostToDevice);
+        cudaMemcpy(vals_device,_vals,sizeof(float)*_nNzElems,cudaMemcpyHostToDevice);
 
-        cudaMemcpy(v1_device,&v1[0u],sizeof(double)*v1.len(),cudaMemcpyHostToDevice);
+        cudaMemcpy(v1_device,&v1[0u],sizeof(float)*v1.len(),cudaMemcpyHostToDevice);
 
         const unsigned threadsPerBlock = 1024u;
         const unsigned numberOfBlocks = _nRows < threadsPerBlock? 1u: (_nRows % threadsPerBlock == 0u? _nRows/threadsPerBlock:_nRows/threadsPerBlock +1u);
@@ -93,7 +93,7 @@ namespace LinearAlgebra
         csrMatrixVectorMultKernel<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
         cudaDeviceSynchronize();
 
-        cudaMemcpy(&rv[0u],rv_device,sizeof(double)*rv.len(),cudaMemcpyDeviceToHost);
+        cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
 
         cudaFree(rows_device);
         cudaFree(cols_device);
@@ -123,7 +123,7 @@ namespace LinearAlgebra
 
             rv[i] = 0;
 
-            double acc = 0;
+            float acc = 0;
             for(unsigned j = startRow; j < endRow; j++)
             {
                 acc += _vals[j] * v1[_cols[j]];
@@ -134,13 +134,13 @@ namespace LinearAlgebra
 
         return rv;
     }
-    void CSRMatrix::randomInit(double a,double b)
+    void CSRMatrix::randomInit(float a,float b)
     {
         if(a == 0 || b == 0) throw std::runtime_error("a and b must be != 0");
 
         std::random_device dev;
         std::mt19937 rng(dev());
-        std::uniform_real_distribution<double> vals_dist(a,b);
+        std::uniform_real_distribution<float> vals_dist(a,b);
         std::uniform_int_distribution<std::mt19937::result_type> cols_dist(0,_nCols-1);
 
         std::vector<char> matrixIndexes(_nRows * _nCols,'0');
@@ -237,7 +237,7 @@ namespace LinearAlgebra
     unsigned  CSRMatrix::nonZeroElements()const{return _nNzElems;}
     unsigned* CSRMatrix::getRowsArray(){return _rows;}
     unsigned* CSRMatrix::getColsArray(){return _cols;}
-    double*   CSRMatrix::getValsArray(){return _vals;}
+    float*   CSRMatrix::getValsArray(){return _vals;}
 
     bool CSRMatrix::operator==(const CSRMatrix& other) const
     {

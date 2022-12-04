@@ -7,8 +7,8 @@
 
 namespace LinearAlgebra
 {
-    Matrix::Matrix(unsigned rows, unsigned cols):_rows{rows},_cols{cols},_data{new double[_rows*_cols]}{}
-    Matrix::Matrix(const Matrix& matrix):_rows{matrix._rows},_cols{matrix._cols},_data{new double[_rows*_cols]}
+    Matrix::Matrix(unsigned rows, unsigned cols):_rows{rows},_cols{cols},_data{new float[_rows*_cols]}{}
+    Matrix::Matrix(const Matrix& matrix):_rows{matrix._rows},_cols{matrix._cols},_data{new float[_rows*_cols]}
     {
         #pragma omp parallel for
         for(unsigned i = 0u; i < _rows; i++)
@@ -100,7 +100,7 @@ namespace LinearAlgebra
         return result;
     }
 
-    Matrix Matrix::operator+(const double constant)const
+    Matrix Matrix::operator+(const float constant)const
     {
         Matrix result{_rows,_cols};
 
@@ -115,7 +115,7 @@ namespace LinearAlgebra
 
         return result;
     }
-    Matrix Matrix::operator-(const double constant)const
+    Matrix Matrix::operator-(const float constant)const
     {
         Matrix result{_rows,_cols};
 
@@ -130,7 +130,7 @@ namespace LinearAlgebra
 
         return result;
     }
-    Matrix Matrix::operator*(const double constant)const
+    Matrix Matrix::operator*(const float constant)const
     {
         Matrix result{_rows,_cols};
 
@@ -145,7 +145,7 @@ namespace LinearAlgebra
 
         return result;
     }
-    Matrix Matrix::operator/(const double constant)const
+    Matrix Matrix::operator/(const float constant)const
     {
         Matrix result{_rows,_cols};
 
@@ -167,14 +167,14 @@ namespace LinearAlgebra
 
         Vector rv{_rows};
 
-        double* matrix_device; double* v1_device; double* rv_device;
+        float* matrix_device; float* v1_device; float* rv_device;
 
-        cudaMalloc(&matrix_device,sizeof(double)*_rows*_cols);
-        cudaMalloc(&v1_device,sizeof(double)*v1.len());
-        cudaMalloc(&rv_device,sizeof(double)*rv.len());
+        cudaMalloc(&matrix_device,sizeof(float)*_rows*_cols);
+        cudaMalloc(&v1_device,sizeof(float)*v1.len());
+        cudaMalloc(&rv_device,sizeof(float)*rv.len());
 
-        cudaMemcpy(matrix_device,_data,sizeof(double)*_rows*_cols,cudaMemcpyHostToDevice);
-        cudaMemcpy(v1_device,&v1[0u],sizeof(double)*v1.len(),cudaMemcpyHostToDevice);
+        cudaMemcpy(matrix_device,_data,sizeof(float)*_rows*_cols,cudaMemcpyHostToDevice);
+        cudaMemcpy(v1_device,&v1[0u],sizeof(float)*v1.len(),cudaMemcpyHostToDevice);
 
         const unsigned threadsPerBlock = 1024u;
         const unsigned numberOfBlocks = _rows < threadsPerBlock? 1u: (_rows % threadsPerBlock == 0u? _rows/threadsPerBlock:_rows/threadsPerBlock +1u);
@@ -187,7 +187,7 @@ namespace LinearAlgebra
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::cout << "Cuda kernel for matrix vector multiplication took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms" << std::endl;
 
-        cudaMemcpy(&rv[0u],rv_device,sizeof(double)*rv.len(),cudaMemcpyDeviceToHost);
+        cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
 
         cudaFree(matrix_device);
         cudaFree(v1_device);
@@ -208,7 +208,7 @@ namespace LinearAlgebra
         {
             rv[i] = 0;
 
-            double acc = 0;
+            float acc = 0;
             for( unsigned j = 0u; j < _cols; j++ )
             {
                 acc += _data[i*_cols + j] * v1[j]; 
@@ -232,7 +232,7 @@ namespace LinearAlgebra
         {
             for(unsigned j = 0u ; j < mat.cols(); j++)
             {
-                double acc = 0;
+                float acc = 0;
                 for(unsigned k = 0u ; k < _cols ; k++)
                 {
                     acc += _data[ i*_cols + k] * mat[ mat.cols()*k + j];
@@ -256,11 +256,11 @@ namespace LinearAlgebra
     }
 
 
-    void Matrix::randomInit(double a,double b)
+    void Matrix::randomInit(float a,float b)
     {
         std::random_device dev;
         std::mt19937 rng(dev());
-        std::uniform_real_distribution<double> dist(a,b);
+        std::uniform_real_distribution<float> dist(a,b);
 
         #pragma omp parallel for
         for(unsigned i = 0u; i < _rows; i++)
@@ -272,7 +272,7 @@ namespace LinearAlgebra
         }
     }
     
-    void Matrix::valInit(double val)
+    void Matrix::valInit(float val)
     {
         #pragma omp parallel for
         for (unsigned i = 0u ; i <  _rows ; i++ )
@@ -308,7 +308,7 @@ namespace LinearAlgebra
 
         unsigned* rowsVec = csrMatrix.getRowsArray();
         unsigned* colsVec = csrMatrix.getColsArray();
-        double*   valsVec = csrMatrix.getValsArray();
+        float*   valsVec = csrMatrix.getValsArray();
 
         unsigned NzElemsIndex = 0u;
 
@@ -357,7 +357,7 @@ namespace LinearAlgebra
 
         unsigned* colsVec = cscMatrix.getColsArray();
         unsigned* rowsVec = cscMatrix.getRowsArray();
-        double*   valsVec = cscMatrix.getValsArray();
+        float*   valsVec = cscMatrix.getValsArray();
 
         unsigned nonZeroElemIndex = 0u;
         colsVec[0u] = 0u;
@@ -382,10 +382,10 @@ namespace LinearAlgebra
 
     unsigned Matrix::rows()const{return _rows;}
     unsigned Matrix::cols()const{return _cols;}
-    double*  Matrix::data(){return _data;}
+    float*  Matrix::data(){return _data;}
 
-    double& Matrix::operator [](unsigned i){return _data[i];}
-    const double& Matrix::operator [](unsigned i)const{return _data[i];}
+    float& Matrix::operator [](unsigned i){return _data[i];}
+    const float& Matrix::operator [](unsigned i)const{return _data[i];}
 
     bool Matrix::operator==(const Matrix& other) const
     {
