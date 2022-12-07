@@ -11,8 +11,29 @@ __global__ void csrMatrixVectorMultKernel(const unsigned* csrRows, const unsigne
 
     for(unsigned i = rowStart ; i < rowEnd ; i++ )
     {
-        acc += csrVals[i] * v1[csrCols[i]]; //TODO: use an acc to limit global access memory
+        acc += csrVals[i] * v1[csrCols[i]];
     }
 
     rv[row] = acc;
+}
+
+
+// assumes blocks of threads
+__global__ void csrMatrixVectorMultKernelReduction(const unsigned* csrRows, const unsigned* csrCols, const float*csrVals, const float* v1, float* rv,const unsigned rows)
+{
+    const unsigned globalIndex = blockIdx.x * blockDim.x + threadIdx.x;
+    const unsigned rowIndex    = globalIndex / 32u;
+    const unsigned warpIndex   = globalIndex % 32u;
+
+    if(rowIndex >= rows) return;
+
+    const unsigned startRow = csrRows[rowIndex];
+    const unsigned endRow   = csrRows[rowIndex + 1];
+
+    const unsigned elementsOnTheRow = endRow - startRow;
+
+    __shared__ float vals[32];
+
+    //vals[threadIdx.x] = csrVals[]
+
 }

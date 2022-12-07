@@ -4,6 +4,41 @@
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
 
+void test_gpuMatVecMultComparison()
+{
+    using LinearAlgebra::Vector;
+    using LinearAlgebra::CSRMatrix;
+    using LinearAlgebra::Matrix;
+    using MeasureTime::Timer;
+
+    Timer t;
+
+    const unsigned rows    = 10000;
+    const unsigned columns = 30000; 
+
+
+    Matrix a{rows,columns};
+    a.randomInit(0,1);
+
+    Vector x{columns};
+    x.randomInit(100,200);
+
+    t.begin();
+    Vector r1 = a.matrixVectorMult(x);
+
+    CSRMatrix f = a.toCSRMatrix();
+
+    t.begin();
+    Vector r2 = f.gpu_matrixVectorMult(x);
+    t.end("[CSRMatrix]GPU matrix vector multiplication");
+
+    t.begin();
+    Vector r3 = f.gpu_matrixVectorMultReduction(x);
+    t.end("[CSRMatrix]GPU matrix vector multiplication with reduction");
+
+    assert(r1 == r2 && r2 == r3);
+}
+
 void test_csrMatrixWithEmptyRows2()
 {
     using LinearAlgebra::CSRMatrix;
@@ -18,14 +53,10 @@ void test_csrMatrixWithEmptyRows2()
     colsVec[0] = 0; colsVec[1] = 2; colsVec[2] = 0; colsVec[3] = 2;
     valsVec[0] = 1.0; valsVec[1] = 2.0; valsVec[2] = 1.0; valsVec[3] = 2.0;
 
-    std::cout << a;
-
     Vector x{3};
     x[0] = 1; x[1] = 2; x[2] = 3;
 
     Vector r1 = a.matrixVectorMult(x);
-
-    std::cout << r1;
 
     CSRMatrix b{2,3,4};
     unsigned* r = b.getRowsArray();
@@ -36,11 +67,7 @@ void test_csrMatrixWithEmptyRows2()
     c[0] = 0; c[1] = 2; c[2] = 0; c[3] = 2;
     v[0] = 1.0; v[1] = 2.0; v[2] = 1.0; v[3] = 2.0;
 
-    std::cout << b;
-
     Vector r2 = b.matrixVectorMult(x);
-
-    std::cout << r2;
 }
 
 void test_csrMatrixWithEmptyRows()
@@ -59,14 +86,10 @@ void test_csrMatrixWithEmptyRows()
     colsVec[0] = 2; colsVec[1] = 0; colsVec[2] = 1; colsVec[3] = 2;
     valsVec[0] = 1.0; valsVec[1] = 3.0; valsVec[2] = 1.0; valsVec[3] = 4.0;
 
-    std::cout << a;
-
     Vector x{3};
     x[0] = 1; x[1] = 2; x[2] = 3;
 
     Vector r1 = a.matrixVectorMult(x);
-
-    std::cout << r1;
 
     CSRMatrix b{2,3,4};
     unsigned* r = b.getRowsArray();
@@ -77,11 +100,7 @@ void test_csrMatrixWithEmptyRows()
     c[0] = 2; c[1] = 0; c[2] = 1; c[3] = 2;
     v[0] = 1.0; v[1] = 3.0; v[2] = 1.0; v[3] = 4.0;
 
-    std::cout << b;
-
     Vector r2 = b.matrixVectorMult(x);
-
-    std::cout << r2;
 }
 
 void test_another_test()
@@ -93,15 +112,9 @@ void test_another_test()
     Matrix a{3,5};
     a.randomInit(0,1);
 
-    std::cout << "Matrix explicit form: " << std::endl << a; 
-
     CSCMatrix b = a.toCSCMatrix();
 
-    std::cout << "Matrix CSC form: " << std::endl << b;
-
     CSRMatrix f = b.toCSR();
-
-    std::cout << "Matrix CSR form: " << std::endl << f;
 }
 
 void test_CSCToCSR()
@@ -120,14 +133,8 @@ void test_CSCToCSR()
     a[5] = 1; a[11] = 1;
     a[7] = 5; a[13] = 1;
 
-    std::cout << "Explicit format: " << std::endl << a;
-
     CSCMatrix b = a.toCSCMatrix();
-
-    std::cout << "CSC format: " << std::endl << b;
-
     CSRMatrix res = b.toCSR();
-    std::cout << "CSR format: " << std::endl << res;
 }
 
 void test_matrixVectorMultSpeedUp()
@@ -210,12 +217,14 @@ void test_matrixVectorMult()
 
 int main()
 {
+    /*
     test_matrixVectorMult();
     test_matrixVectorMultSpeedUp();
     test_CSCToCSR();
     test_another_test();
     test_csrMatrixWithEmptyRows();
     test_csrMatrixWithEmptyRows2();
-
+    */
+    test_gpuMatVecMultComparison();
     return 0;
 }
