@@ -7,10 +7,12 @@ __global__ void csrMatrixVectorMultKernel(const unsigned* csrRows, const unsigne
     const unsigned rowStart = csrRows[row]; 
     const unsigned rowEnd   = csrRows[row + 1];
 
-    rv[row] = 0;
+    float acc = 0.0f;
 
     for(unsigned i = rowStart ; i < rowEnd ; i++ )
     {
-        rv[row] += csrVals[i] * v1[csrCols[i]]; //TODO: use an acc to limit global access memory
+        acc += csrVals[i] * v1[csrCols[i]]; //TODO: use an acc to limit global access memory
     }
+
+    rv[row] = acc;
 }
