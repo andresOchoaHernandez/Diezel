@@ -51,7 +51,7 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU AND OpenMP_CXX_FOUND)
         PRIVATE ${PROJECT_SOURCE_DIR}/src/CSCMatrix.cu
     )
 
-    target_link_libraries(LinearAlgebra PRIVATE OpenMP::OpenMP_CXX)
+    target_link_libraries(LinearAlgebra PRIVATE OpenMP::OpenMP_CXX ${CUDA_cusparse_LIBRARY})
     #===================================================================
 
     #============================= TESTING =============================

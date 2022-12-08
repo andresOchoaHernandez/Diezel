@@ -133,8 +133,12 @@ void test_matrixVectorMultSpeedUp()
     Vector r3 = f.gpu_matrixVectorMult(x);
     t.end("[CSRMatrix]GPU matrix vector multiplication");
 
-    assert(r1 == r2 && r2 == r3);
+    t.begin();
+    Vector r4 = f.gpu_cuSparse_matrixVectorMult(x);
+    t.end("[CSRMatrix]CuSparse GPU matrix vector multiplication");
 
+
+    assert(r1 == r2 && r2 == r3 && r3 == r4);
 }
 
 void test_matrixVectorMult()

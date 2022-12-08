@@ -2,6 +2,7 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
+#include <cusparse.h>
 
 #include "LinearAlgebra.hpp"
 #include "CSRMatrixKernels.cu"
@@ -108,6 +109,66 @@ namespace LinearAlgebra
         cudaDeviceReset();
 
         return rv;
+    }
+
+    Vector CSRMatrix::gpu_cuSparse_matrixVectorMult(const Vector& v1)const
+    {
+        if(_nCols != v1.len()) throw std::runtime_error{"Matrix dimensions and vector dimensions don't match"};
+
+        Vector rv{_nRows};
+
+        unsigned* rows_device;
+        unsigned* cols_device;
+        float*   vals_device; 
+        
+        float* v1_device; 
+        float* rv_device;
+
+        cudaMalloc(&rows_device,sizeof(unsigned)*(_nRows + 1));
+        cudaMalloc(&cols_device,sizeof(unsigned)*_nNzElems);
+        cudaMalloc(&vals_device,sizeof(float)*_nNzElems);
+
+        cudaMalloc(&v1_device,sizeof(float)*v1.len());
+        cudaMalloc(&rv_device,sizeof(float)*rv.len());
+
+        cudaMemcpy(rows_device,_rows,sizeof(unsigned)*(_nRows + 1),cudaMemcpyHostToDevice);
+        cudaMemcpy(cols_device,_cols,sizeof(unsigned)*_nNzElems,cudaMemcpyHostToDevice);
+        cudaMemcpy(vals_device,_vals,sizeof(float)*_nNzElems,cudaMemcpyHostToDevice);
+
+        cudaMemcpy(v1_device,&v1[0u],sizeof(float)*v1.len(),cudaMemcpyHostToDevice);
+
+        // =========== CUSPARSE ========== //
+        cusparseHandle_t     handle = nullptr;
+        cusparseSpMatDescr_t csrMatrixDesc;
+        cusparseDnVecDescr_t v1Desc,rvDesc;
+
+        cusparseCreate(&handle);
+        cusparseCreateCsr(&csrMatrixDesc,_nRows,_nCols,_nNzElems,rows_device,cols_device,vals_device,CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I,CUSPARSE_INDEX_BASE_ZERO,CUDA_R_32F);
+        cusparseCreateDnVec(&v1Desc,v1.len(),v1_device,CUDA_R_32F);
+        cusparseCreateDnVec(&rvDesc,rv.len(),rv_device,CUDA_R_32F);
+
+        float alpha = 1.0f, beta = 0.0f;
+        cusparseSpMV(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,&alpha,csrMatrixDesc,v1Desc, &beta, rvDesc, CUDA_R_32F,CUSPARSE_MV_ALG_DEFAULT,nullptr);
+
+        cusparseDestroySpMat(csrMatrixDesc);
+        cusparseDestroyDnVec(v1Desc);
+        cusparseDestroyDnVec(rvDesc);
+
+        cusparseDestroy(handle);
+
+        // ========== ========= ========== //
+        cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
+
+        cudaFree(rows_device);
+        cudaFree(cols_device);
+        cudaFree(vals_device);
+
+        cudaFree(v1_device);
+        cudaFree(rv_device);
+
+        cudaDeviceReset();
+
+        return rv;      
     }
 
     Vector CSRMatrix::matrixVectorMult(const Vector& v1) const
