@@ -85,62 +85,13 @@ namespace LinearAlgebra
 
         cudaMemcpy(v1_device,&v1[0u],sizeof(float)*v1.len(),cudaMemcpyHostToDevice);
 
-        const unsigned threadsPerBlock = 1024u;
-        const unsigned numberOfBlocks = _nRows < threadsPerBlock? 1u: (_nRows % threadsPerBlock == 0u? _nRows/threadsPerBlock:_nRows/threadsPerBlock +1u);
+        const unsigned threadsPerBlock = 32u;
+        const unsigned numberOfBlocks = _nRows < threadsPerBlock? 32u: (_nRows % threadsPerBlock == 0u?_nRows:_nRows+1u);
+
         dim3 dimGrid(numberOfBlocks,1,1);
         dim3 dimBlock(threadsPerBlock,1,1);
 
         csrMatrixVectorMultKernel<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
-        cudaError_t cudaerr = cudaDeviceSynchronize();
-        if (cudaerr != cudaSuccess)
-            printf("kernel launch failed with error \"%s\".\n",cudaGetErrorString(cudaerr));
-
-        cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
-
-        cudaFree(rows_device);
-        cudaFree(cols_device);
-        cudaFree(vals_device);
-
-        cudaFree(v1_device);
-        cudaFree(rv_device);
-
-        cudaDeviceReset();
-
-        return rv;
-    }
-
-    Vector CSRMatrix::gpu_matrixVectorMultReduction(const Vector& v1) const
-    {
-        if(_nCols != v1.len()) throw std::runtime_error{"Matrix dimensions and vector dimensions don't match"};
-
-        Vector rv{_nRows};
-
-        unsigned* rows_device;
-        unsigned* cols_device;
-        float*   vals_device; 
-        
-        float* v1_device; 
-        float* rv_device;
-
-        cudaMalloc(&rows_device,sizeof(unsigned)*(_nRows + 1));
-        cudaMalloc(&cols_device,sizeof(unsigned)*_nNzElems);
-        cudaMalloc(&vals_device,sizeof(float)*_nNzElems);
-
-        cudaMalloc(&v1_device,sizeof(float)*v1.len());
-        cudaMalloc(&rv_device,sizeof(float)*rv.len());
-
-        cudaMemcpy(rows_device,_rows,sizeof(unsigned)*(_nRows + 1),cudaMemcpyHostToDevice);
-        cudaMemcpy(cols_device,_cols,sizeof(unsigned)*_nNzElems,cudaMemcpyHostToDevice);
-        cudaMemcpy(vals_device,_vals,sizeof(float)*_nNzElems,cudaMemcpyHostToDevice);
-
-        cudaMemcpy(v1_device,&v1[0u],sizeof(float)*v1.len(),cudaMemcpyHostToDevice);
-
-        const unsigned threadsPerBlock = 32u;
-        const unsigned numberOfBlocks = _nRows < threadsPerBlock? 32u: (_nRows % threadsPerBlock == 0u?_nRows:_nRows+1u);
-        dim3 dimGrid(numberOfBlocks,1,1);
-        dim3 dimBlock(threadsPerBlock,1,1);
-
-        csrMatrixVectorMultKernelReduction<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
         cudaError_t cudaerr = cudaDeviceSynchronize();
         if (cudaerr != cudaSuccess)
             printf("kernel launch failed with error \"%s\".\n",cudaGetErrorString(cudaerr));

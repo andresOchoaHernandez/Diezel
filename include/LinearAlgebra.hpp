@@ -111,7 +111,6 @@ namespace LinearAlgebra{
             Vector matrixVectorMult(const Vector& v1)const;
 
             Vector gpu_matrixVectorMult(const Vector& v1)const;
-            Vector gpu_matrixVectorMultReduction(const Vector& v1)const;
 
             Matrix toMatrix() const;
             CSCMatrix toCSC() const;

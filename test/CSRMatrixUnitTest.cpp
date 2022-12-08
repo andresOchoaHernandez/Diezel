@@ -4,41 +4,6 @@
 #include "LinearAlgebra.hpp"
 #include "MeasureTime.hpp"
 
-void test_gpuMatVecMultComparison()
-{
-    using LinearAlgebra::Vector;
-    using LinearAlgebra::CSRMatrix;
-    using LinearAlgebra::Matrix;
-    using MeasureTime::Timer;
-
-    Timer t;
-
-    const unsigned rows    = 10000;
-    const unsigned columns = 30000; 
-
-
-    Matrix a{rows,columns};
-    a.randomInit(0,1);
-
-    Vector x{columns};
-    x.randomInit(100,200);
-
-    t.begin();
-    Vector r1 = a.matrixVectorMult(x);
-
-    CSRMatrix f = a.toCSRMatrix();
-
-    t.begin();
-    Vector r2 = f.gpu_matrixVectorMult(x);
-    t.end("[CSRMatrix]GPU matrix vector multiplication");
-
-    t.begin();
-    Vector r3 = f.gpu_matrixVectorMultReduction(x);
-    t.end("[CSRMatrix]GPU matrix vector multiplication with reduction");
-
-    assert(r1 == r2 && r2 == r3);
-}
-
 void test_csrMatrixWithEmptyRows2()
 {
     using LinearAlgebra::CSRMatrix;
@@ -72,8 +37,6 @@ void test_csrMatrixWithEmptyRows2()
 
 void test_csrMatrixWithEmptyRows()
 {
-    // REPEAT ROW INDEX FOR EMPTY ROWS LEADS TO CORRECT BEHAVIOUR
-
     using LinearAlgebra::CSRMatrix;
     using LinearAlgebra::Vector;
 
@@ -146,8 +109,8 @@ void test_matrixVectorMultSpeedUp()
 
     Timer t;
 
-    const unsigned rows    = 10000;
-    const unsigned columns = 30000; 
+    const unsigned rows    = 2000;
+    const unsigned columns = 3000; 
 
 
     Matrix a{rows,columns};
@@ -211,20 +174,18 @@ void test_matrixVectorMult()
     Vector r = b.matrixVectorMult(x);
 
     Vector r1 = b.gpu_matrixVectorMult(x);
-
+    
     assert(r == r1);
 }
 
 int main()
 {
-    /*
     test_matrixVectorMult();
     test_matrixVectorMultSpeedUp();
     test_CSCToCSR();
     test_another_test();
     test_csrMatrixWithEmptyRows();
     test_csrMatrixWithEmptyRows2();
-    */
-    test_gpuMatVecMultComparison();
+    
     return 0;
 }

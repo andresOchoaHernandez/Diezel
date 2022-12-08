@@ -1,29 +1,7 @@
 __global__ void csrMatrixVectorMultKernel(const unsigned* csrRows, const unsigned* csrCols, const float*csrVals, const float* v1, float* rv,const unsigned rows)
 {
-    const unsigned row = blockIdx.x * blockDim.x + threadIdx.x;
-
-    if (row >= rows) return;
-
-    const unsigned rowStart = csrRows[row]; 
-    const unsigned rowEnd   = csrRows[row + 1];
-
-    float acc = 0.0f;
-
-    for(unsigned i = rowStart ; i < rowEnd ; i++ )
-    {
-        acc += csrVals[i] * v1[csrCols[i]];
-    }
-
-    rv[row] = acc;
-}
-
-
-// assumes blocks of threads
-__global__ void csrMatrixVectorMultKernelReduction(const unsigned* csrRows, const unsigned* csrCols, const float*csrVals, const float* v1, float* rv,const unsigned rows)
-{
     const unsigned globalIndex = blockIdx.x * blockDim.x + threadIdx.x;
     const unsigned rowIndex    = globalIndex / 32u;
-    const unsigned warpIndex   = globalIndex % 32u;
 
     if(rowIndex >= rows) return;
 
@@ -34,6 +12,28 @@ __global__ void csrMatrixVectorMultKernelReduction(const unsigned* csrRows, cons
 
     __shared__ float vals[32];
 
-    //vals[threadIdx.x] = csrVals[]
+    for(unsigned offset = 0; offset < (unsigned)ceilf(elementsOnTheRow/32.0f) ; offset++)
+    {
+        vals[threadIdx.x] = 0.0f;
 
+        if(threadIdx.x < (elementsOnTheRow - 32u*offset))
+        {
+            vals[threadIdx.x] = csrVals[startRow + 32u*offset + threadIdx.x] * v1[csrCols[startRow + 32u*offset + threadIdx.x]];
+        }
+        __syncthreads();
+
+        for(unsigned i = 1u; i < 32u ; i*=2u)
+        {
+            const unsigned index = threadIdx.x*i*2;
+
+            if(index < 32)
+                vals[index] += vals[index + i]; 
+            __syncthreads();
+        }   
+
+        if(threadIdx.x == 0)
+        {
+            rv[rowIndex] += vals[0];
+        }
+    }
 }
