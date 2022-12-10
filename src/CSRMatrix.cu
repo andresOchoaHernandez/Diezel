@@ -92,10 +92,16 @@ namespace LinearAlgebra
         dim3 dimGrid(numberOfBlocks,1,1);
         dim3 dimBlock(threadsPerBlock,1,1);
 
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
         csrMatrixVectorMultKernel<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
         cudaError_t cudaerr = cudaDeviceSynchronize();
         if (cudaerr != cudaSuccess)
             printf("kernel launch failed with error \"%s\".\n",cudaGetErrorString(cudaerr));
+
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        auto timeKernel = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+        std::cout << "Kernel CSR matrix vector multiplication took: " << timeKernel << " ms" << std::endl;
 
         cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
 
@@ -148,7 +154,15 @@ namespace LinearAlgebra
         cusparseCreateDnVec(&rvDesc,rv.len(),rv_device,CUDA_R_32F);
 
         float alpha = 1.0f, beta = 0.0f;
+
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         cusparseSpMV(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,&alpha,csrMatrixDesc,v1Desc, &beta, rvDesc, CUDA_R_32F,CUSPARSE_MV_ALG_DEFAULT,nullptr);
+        
+        cudaDeviceSynchronize();
+        
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        auto timeCusparse = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+        std::cout << "CuSparse CSR matrix vector multiplication took: " << timeCusparse << " ms" << std::endl;
 
         cusparseDestroySpMat(csrMatrixDesc);
         cusparseDestroyDnVec(v1Desc);

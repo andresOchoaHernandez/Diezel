@@ -38,17 +38,23 @@ if(CUDA_FOUND AND CUDA_HAVE_GPU AND OpenMP_CXX_FOUND)
 
     target_include_directories(
         LinearAlgebra 
+        
         PUBLIC  ${PROJECT_SOURCE_DIR}/include/
+        
         PRIVATE ${PROJECT_SOURCE_DIR}/src/
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/utils
     )
     
     target_sources(
         LinearAlgebra
         PUBLIC  ${PROJECT_SOURCE_DIR}/include/LinearAlgebra.hpp
+        
         PRIVATE ${PROJECT_SOURCE_DIR}/src/Vector.cu
         PRIVATE ${PROJECT_SOURCE_DIR}/src/Matrix.cu
         PRIVATE ${PROJECT_SOURCE_DIR}/src/CSRMatrix.cu
         PRIVATE ${PROJECT_SOURCE_DIR}/src/CSCMatrix.cu
+        
+        PRIVATE ${PROJECT_SOURCE_DIR}/src/utils.cpp
     )
 
     target_link_libraries(LinearAlgebra PRIVATE OpenMP::OpenMP_CXX ${CUDA_cusparse_LIBRARY})

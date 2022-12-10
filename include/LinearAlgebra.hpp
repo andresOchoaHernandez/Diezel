@@ -164,4 +164,6 @@ namespace LinearAlgebra{
 
             friend std::ostream& operator<<(std::ostream& stream, const CSCMatrix& operand);
     };
+
+    bool areFloatNearlyEqual(float a, float b);
 }

@@ -110,8 +110,7 @@ void test_matrixVectorMultSpeedUp()
     Timer t;
 
     const unsigned rows    = 2000;
-    const unsigned columns = 3000; 
-
+    const unsigned columns = 50000;
 
     Matrix a{rows,columns};
     a.randomInit(0,1);
@@ -137,8 +136,9 @@ void test_matrixVectorMultSpeedUp()
     Vector r4 = f.gpu_cuSparse_matrixVectorMult(x);
     t.end("[CSRMatrix]CuSparse GPU matrix vector multiplication");
 
-
-    assert(r1 == r2 && r2 == r3 && r3 == r4);
+    assert(r1 == r2);
+    assert(r1 == r3);
+    assert(r1 == r4);
 }
 
 void test_matrixVectorMult()
@@ -184,12 +184,12 @@ void test_matrixVectorMult()
 
 int main()
 {
-    test_matrixVectorMult();
+    //test_matrixVectorMult();
     test_matrixVectorMultSpeedUp();
-    test_CSCToCSR();
-    test_another_test();
-    test_csrMatrixWithEmptyRows();
-    test_csrMatrixWithEmptyRows2();
+    //test_CSCToCSR();
+    //test_another_test();
+    //test_csrMatrixWithEmptyRows();
+    //test_csrMatrixWithEmptyRows2();
     
     return 0;
 }

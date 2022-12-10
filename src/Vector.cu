@@ -4,7 +4,6 @@
 
 #include "LinearAlgebra.hpp"
 #include "VectorKernels.cu"
-#include "utils.cpp"
 
 namespace LinearAlgebra
 {
@@ -211,6 +210,7 @@ namespace LinearAlgebra
         {
             if(!areFloatNearlyEqual(_vec[i],other[i])) 
             {
+                std::cout << "this > " << _vec[i] << " other > " << other[i] << std::endl;
                 return false;
             }
         }
