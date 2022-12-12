@@ -178,13 +178,17 @@ void test_matrixVectorMult()
     Vector r = b.matrixVectorMult(x);
 
     Vector r1 = b.gpu_matrixVectorMult(x);
+
+    Vector r2 = b.gpu_cuSparse_matrixVectorMult(x);
     
     assert(r == r1);
+    assert(r == r2);
+    assert(r1 == r2);
 }
 
 int main()
 {
-    //test_matrixVectorMult();
+    test_matrixVectorMult();
     test_matrixVectorMultSpeedUp();
     //test_CSCToCSR();
     //test_another_test();

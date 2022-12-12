@@ -141,25 +141,29 @@ namespace LinearAlgebra
         cudaMemcpy(cols_device,_cols,sizeof(unsigned)*_nNzElems,cudaMemcpyHostToDevice);
         cudaMemcpy(vals_device,_vals,sizeof(float)*_nNzElems,cudaMemcpyHostToDevice);
 
+        cudaMemset(rv_device,0.0f,sizeof(float)*rv.len());
+
         cudaMemcpy(v1_device,&v1[0u],sizeof(float)*v1.len(),cudaMemcpyHostToDevice);
 
         // =========== CUSPARSE ========== //
         cusparseHandle_t     handle = nullptr;
         cusparseSpMatDescr_t csrMatrixDesc;
         cusparseDnVecDescr_t v1Desc,rvDesc;
+        void *buffer = nullptr;
+        size_t sizeBuffer = 0;
+        float alpha = 1.0f, beta = 0.0f;
 
         cusparseCreate(&handle);
         cusparseCreateCsr(&csrMatrixDesc,_nRows,_nCols,_nNzElems,rows_device,cols_device,vals_device,CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I,CUSPARSE_INDEX_BASE_ZERO,CUDA_R_32F);
         cusparseCreateDnVec(&v1Desc,v1.len(),v1_device,CUDA_R_32F);
         cusparseCreateDnVec(&rvDesc,rv.len(),rv_device,CUDA_R_32F);
 
-        float alpha = 1.0f, beta = 0.0f;
+        cusparseSpMV_bufferSize(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,&alpha, csrMatrixDesc, v1Desc, &beta, rvDesc, CUDA_R_32F,CUSPARSE_CSRMV_ALG2, &sizeBuffer);
+        cudaMalloc(&buffer, sizeBuffer);
 
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        cusparseSpMV(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,&alpha,csrMatrixDesc,v1Desc, &beta, rvDesc, CUDA_R_32F,CUSPARSE_MV_ALG_DEFAULT,nullptr);
-        
+        cusparseSpMV(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,&alpha,csrMatrixDesc,v1Desc, &beta, rvDesc, CUDA_R_32F,CUSPARSE_CSRMV_ALG2,buffer); 
         cudaDeviceSynchronize();
-        
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         auto timeCusparse = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
         std::cout << "CuSparse CSR matrix vector multiplication took: " << timeCusparse << " ms" << std::endl;
