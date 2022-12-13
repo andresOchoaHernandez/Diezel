@@ -86,8 +86,8 @@ namespace LinearAlgebra
 
         cudaMemcpy(v1_device,&v1[0u],sizeof(float)*v1.len(),cudaMemcpyHostToDevice);
 
-        const unsigned threadsPerBlock = 32u;
-        const unsigned numberOfBlocks = _nRows < threadsPerBlock? 32u: (_nRows % threadsPerBlock == 0u?_nRows:_nRows+1u);
+        const unsigned threadsPerBlock = 64u;
+        const unsigned numberOfBlocks = _nRows < threadsPerBlock? 64u: (_nRows % threadsPerBlock == 0u?_nRows:_nRows+1u);
 
         dim3 dimGrid(numberOfBlocks,1,1);
         dim3 dimBlock(threadsPerBlock,1,1);
