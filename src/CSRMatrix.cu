@@ -73,6 +73,10 @@ namespace LinearAlgebra
         float* v1_device; 
         float* rv_device;
 
+        cudaEvent_t start, stop;
+        cudaEventCreate(&start);
+        cudaEventCreate(&stop);
+
         cudaMalloc(&rows_device,sizeof(unsigned)*(_nRows + 1));
         cudaMalloc(&cols_device,sizeof(unsigned)*_nNzElems);
         cudaMalloc(&vals_device,sizeof(float)*_nNzElems);
@@ -92,18 +96,18 @@ namespace LinearAlgebra
         dim3 dimGrid(numberOfBlocks,1,1);
         dim3 dimBlock(threadsPerBlock,1,1);
 
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
+        cudaEventRecord(start);
         csrMatrixVectorMultKernel<<<dimGrid,dimBlock>>>(rows_device,cols_device,vals_device,v1_device,rv_device,_nRows);
-        cudaError_t cudaerr = cudaDeviceSynchronize();
-        if (cudaerr != cudaSuccess)
-            printf("kernel launch failed with error \"%s\".\n",cudaGetErrorString(cudaerr));
+        cudaEventRecord(stop);
 
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        auto timeKernel = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-        std::cout << "Kernel CSR matrix vector multiplication took: " << timeKernel << " ms" << std::endl;
 
         cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
+
+        cudaEventSynchronize(stop);
+        float milliseconds = 0;
+        cudaEventElapsedTime(&milliseconds, start, stop);
+        std::cout << "Cuda kernel for csr matrix vector multiplication took : " << milliseconds << " ms" << std::endl;
+
 
         cudaFree(rows_device);
         cudaFree(cols_device);
@@ -129,6 +133,10 @@ namespace LinearAlgebra
         
         float* v1_device; 
         float* rv_device;
+
+        cudaEvent_t start, stop;
+        cudaEventCreate(&start);
+        cudaEventCreate(&stop);
 
         cudaMalloc(&rows_device,sizeof(unsigned)*(_nRows + 1));
         cudaMalloc(&cols_device,sizeof(unsigned)*_nNzElems);
@@ -161,12 +169,9 @@ namespace LinearAlgebra
         cusparseSpMV_bufferSize(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,&alpha, csrMatrixDesc, v1Desc, &beta, rvDesc, CUDA_R_32F,CUSPARSE_CSRMV_ALG2, &sizeBuffer);
         cudaMalloc(&buffer, sizeBuffer);
 
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        cudaEventRecord(start);
         cusparseSpMV(handle, CUSPARSE_OPERATION_NON_TRANSPOSE,&alpha,csrMatrixDesc,v1Desc, &beta, rvDesc, CUDA_R_32F,CUSPARSE_CSRMV_ALG2,buffer); 
-        cudaDeviceSynchronize();
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        auto timeCusparse = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-        std::cout << "CuSparse CSR matrix vector multiplication took: " << timeCusparse << " ms" << std::endl;
+        cudaEventRecord(stop);
 
         cusparseDestroySpMat(csrMatrixDesc);
         cusparseDestroyDnVec(v1Desc);
@@ -176,6 +181,11 @@ namespace LinearAlgebra
 
         // ========== ========= ========== //
         cudaMemcpy(&rv[0u],rv_device,sizeof(float)*rv.len(),cudaMemcpyDeviceToHost);
+
+        cudaEventSynchronize(stop);
+        float milliseconds = 0;
+        cudaEventElapsedTime(&milliseconds, start, stop);
+        std::cout << "CuSparse CSR SpMV took : " << milliseconds << " ms" << std::endl;
 
         cudaFree(rows_device);
         cudaFree(cols_device);

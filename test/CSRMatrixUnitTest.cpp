@@ -109,7 +109,7 @@ void test_matrixVectorMultSpeedUp()
 
     Timer t;
 
-    const unsigned rows    = 2000;
+    const unsigned rows    = 7000;
     const unsigned columns = 50000;
 
     Matrix a{rows,columns};
